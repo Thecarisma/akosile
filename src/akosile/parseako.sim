@@ -1,0 +1,124 @@
+
+call "simple/io/File.sim"
+call "simple/core/List.sim"
+call "akoscanner.sim"
+
+position = 0
+source = ""
+
+block sourcePosition()
+	if position > lengthOf(source) {
+		return lengthOf(source)
+	else
+		return position
+	}
+
+block parseAkoFile(file)
+	printAkoMessage("preparing to parse map.ako file",1)
+	source = file.readFileAsString()
+	if startAkoParsing(source) {
+		return true
+	else
+		return false
+	}
+	return false
+	
+block startAkoParsing(source)
+	while peekAkoChar(0) != 1 {
+		switch peekAkoChar(0) {
+			case '"'
+				scanLiteral(source,position) 
+			default
+				if peekAkoChar(1) == -1 { break }
+				readAkoChar()
+		}		
+	}
+	return true
+	
+block parseAkoVariable(source,sourcePosition)
+	var = "" varandval = []
+	do {
+		var += source[position++]
+	} while source[sourcePosition()+1] != "]" 
+	skipWhiteSpace(source,position)
+	position++
+	@source[sourcePosition()]
+	if source[sourcePosition()] == "(" {
+		@">>>"+source[position+1]
+		varandval[var] = parseAkoValue(source,sourcePosition)
+	}
+	return varandval
+	
+block parseAkoValue(source,sourcePosition)
+	return "adew"
+	
+#Scanner
+
+block scanLiteral(source,position)
+	value = ""
+	readAkoChar() 
+	while peekAkoChar(0) != '"' and peekAkoChar(0) != -1 {
+		charValue = readAkoChar()
+		if charValue == "\"
+			value += scanLiteralEscape(readAkoChar())
+		else
+			value += charValue
+		}
+	}
+	readAkoChar()
+	return value
+	
+	
+block scanLiteralEscape(akoChar)
+	switch akoChar {
+		case "n"
+			return nl
+		case "t"
+			return char(13)
+		default
+			printAkoMessage("the escape literal "+akoChar+" is invalid skipping...",2)
+	}
+	
+#Token
+
+block skipWhiteSpace()
+	while peekAkoChar(0) == " " {
+		readChar(source,position)
+	}
+
+block readAkoChar()
+	if peekAkoChar(0) == nl {
+		
+	}
+	if position < lengthOf(source) {
+		value = source[position] position++
+		return value
+	}
+	return -1
+	
+block peekAkoChar(n)
+	if position + n < lengthOf(source) {
+		return source[position+n]
+	else	
+		return -1
+	}
+
+block acceptAkoTokens(variable,value,location,type,variableMap)
+	token = new AkoToken(variable,value,location,type)
+	addToList(variableMap, token)
+
+block acceptAkoToken(token,variableMap)
+	addToList(variableMap, token)
+	
+class AkoToken
+	
+	type location value variable location
+	
+	block AkoToken(variable,value,location,type)
+		this.type = type
+		this.variable = variable
+		this.value =  value
+		this.location = location
+	
+	
+	
