@@ -3,26 +3,9 @@ call "simple/io/File.sim"
 call "simple/core/List.sim"
 call "simple/utilities/Type.sim"
 
-position = 0
-source = ""
 
-block sourcePosition()
-	if position > lengthOf(source) {
-		return lengthOf(source)
-	else
-		return position
-	}
-
-block parseAkoFile(file)
+block parseAkoFile(sourceFile)
 	printAkoMessage("preparing to parse map.ako file",1)
-	if startAkoParsing(file) {
-		return true
-	else
-		return false
-	}
-	return false
-	
-block startAkoParsing(sourceFile)
 	SCANNER_IDENTIFIER = 0 SCANNER_COMMENT = 1 SCANNER__GROUP = 2 SCANNER_COMMENT__GROUP = 3
 	SCANNER_TYPE = SCANNER_IDENTIFIER
 	source = sourceFile.readFileAsString()
@@ -44,7 +27,7 @@ block startAkoParsing(sourceFile)
 						}
 					}
 					a++ a++
-					while isWhiteSpace(source[a++]) {}
+					while isWhiteSpace(source[a+1]) { a++ } if isWhiteSpace(source[a]) { a++ }
 					if source[a] == "(" or source[a] == '"' or source[a] == "'" {
 						switch source[a] {
 							case '(' litTemp = ')'
@@ -86,8 +69,7 @@ block startAkoParsing(sourceFile)
 						}
 					}
 					a++ a++
-					while isWhiteSpace(source[a++]) { }
-					@source[a]
+					while isWhiteSpace(source[a+1]) { a++ } if isWhiteSpace(source[a]) { a++ }
 					if source[a] == "(" or source[a] == '"' or source[a] == "'" {
 						switch source[a] {
 							case '(' litTemp = ')'
@@ -101,7 +83,6 @@ block startAkoParsing(sourceFile)
 								throwAkoError("Invalid identifier '"+source[a]+"' near '"+valVal+"'",sourceCurrentLine,sourceFileName)
 							}
 						}
-					@valVar
 					currentClass[valVar] = valVal
 					}
 				elif source[a] == '/' and source[a+1] == '*' a++ SCANNER_TYPE = SCANNER_COMMENT__GROUP
@@ -122,15 +103,4 @@ block startAkoParsing(sourceFile)
 		}
 	}
 	return true
-	
-class AkoToken
-	
-	type location value variable location
-	
-	block AkoToken(variable,value,location,type)
-		this.type = type
-		this.variable = variable
-		this.value =  value
-		this.location = location
-	
 	

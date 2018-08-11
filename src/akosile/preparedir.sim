@@ -11,7 +11,7 @@ block prepareDirectory(currentDir)
 		printAkoMessage("directory: "+path.absolutePath(),0)
 	akoFile = new File(path.absolutePath()+"map.ako")
 	if akoFile.exists() {
-		if parseAkoFile(akoFile) {
+		if parseAkoFile(akoFile) == true {
 			printAkoMessage("map.ako parsed successfully",0)
 		else
 			printAkoError("map.ako parsing failed")
