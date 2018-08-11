@@ -66,7 +66,6 @@ block startAkoParsing(sourceFile)
 						SCANNER_TYPE = SCANNER__GROUP
 						continue
 					}
-				elif source[a] == '/' and source[a+1] == '*' a++ SCANNER_TYPE = SCANNER_COMMENT
 				elif val == nl or val == crlf sourceCurrentLine++
 				}
 			case SCANNER__GROUP
@@ -107,13 +106,13 @@ block startAkoParsing(sourceFile)
 				}
 			case SCANNER_COMMENT__GROUP
 				if source[a] == '*' and source[a+1] == '/' {
-					a++ SCANNER_TYPE = SCANNER__GROUP
+					SCANNER_TYPE = SCANNER__GROUP
 				else 
 					
 				}
 			case SCANNER_COMMENT
 				if source[a] == '*' and source[a+1] == '/' {
-					a++ SCANNER_TYPE = SCANNER_IDENTIFIER
+					SCANNER_TYPE = SCANNER_IDENTIFIER
 				else 
 					
 				}

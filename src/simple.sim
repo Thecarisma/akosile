@@ -28,4 +28,4 @@ block main()
 		}
 	}
 	prepareDirectory(dir)
-	@variableMap["Link"]
+	@variableMap[0]
