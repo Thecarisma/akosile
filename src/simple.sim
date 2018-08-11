@@ -5,8 +5,9 @@ call "simple/io/Directory.sim"
 
 block main()
 	dir = null
-	for a in cmdparams {
-		switch a {
+	cmdparamsLen = lengthOf(cmdparams)
+	for a = 0 to cmdparamsLen {
+		switch cmdparams[a] {
 			case "--help" helpMessage() continue
 			case "-h" helpMessage() continue
 			case "--h" helpMessage() continue
@@ -19,10 +20,13 @@ block main()
 			case "--silent" akoBeSilent = true continue
 			case "-s" akoBeSilent = true continue
 			case "--s" akoBeSilent = true continue
+			case "--destination" akoDestDir = cmdparams[a++]
+			case "-ds" akoDestDir = cmdparams[a++]
+			case "--ds" akoDestDir = cmdparams[a++]
 			default
-				path = new Directory(a)
+				path = new Directory(cmdparams[a])
 				if path.isADirectory() {
-					dir = a 
+					dir = cmdparams[a] 
 					continue
 				}
 		}

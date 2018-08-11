@@ -23,9 +23,13 @@ block processDirectory(sourceDir)
 	files = sourceDir.listFiles()
 	filesLen = lengthOf(files)
 	for b = 0 to filesLen {
-		if stringEndsWith(files[b].absolutePath(),"") {
-			@files[b].absolutePath()
-			createHtmls(files[b])
+		supportedLen = lengthOf(supportedSources)
+		for c = 0 to supportedLen {
+			if stringEndsWith(files[b].absolutePath(),supportedSources[c]) {
+				@files[b].absolutePath()
+				createHtmls(files[b],supportedSources[c])
+				break
+			}
 		}
 	}
 	dirs = sourceDir.listDirectories()
@@ -35,8 +39,12 @@ block processDirectory(sourceDir)
 		processDirectory(dirs[b])
 	}
 	
-block createHtmls(sourcePath)
-	htmlFilePath =  sourcePath.absolutePath()
+block createHtmls(sourcePath,type)
+	htmlFilePath =  removeString(sourcePath.absolutePath(),type)+".html"
+	htmlFile = new File(htmlFilePath)
+	@destDir
+	#htmlFile.write("")
+	@htmlFilePath
 	__exit__
 
 

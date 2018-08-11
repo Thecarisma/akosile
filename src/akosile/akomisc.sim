@@ -3,8 +3,12 @@ call "simple/utilities/Console.sim"
 
 printVerbose = false
 akoBeSilent = false
+
+akoDestDir = ""
+
 variableMap = []
 supportedSources = [".sim"]
+
 
 block printAkoMessage(message,type)
 	if akoBeSilent { return } 
