@@ -23,13 +23,13 @@ block parseAkoFile(file)
 	return false
 	
 block startAkoParsing(sourceFile)
-	SCANNER_IDENTIFIER = 0 SCANNER_LITERAL = 1
+	SCANNER_IDENTIFIER = 0 SCANNER_COMMENT = 1 SCANNER_CLASS = 2
 	SCANNER_TYPE = SCANNER_IDENTIFIER
 	source = sourceFile.readFileAsString()
 	sourceFileName = sourceFile.name()
 	sourceLen = lengthOf(source)
 	sourceCurrentLine = 1
-	currentClass = "__Main"
+	currentClass = variableMap["__Main"]
 	for a = 0 to sourceLen {
 		val = source[a]
 		switch SCANNER_TYPE {
@@ -57,18 +57,24 @@ block startAkoParsing(sourceFile)
 								throwAkoError("Invalid identifier '"+source[a]+"' near '"+valVal+"'",sourceCurrentLine,sourceFileName)
 							}
 						}
-					@valVar+" = "+valVal
-					#variableMap[valVar] = valVal
+					variableMap[valVar] = valVal
 					elif source[a] == "{" 
-						@valVar+" is a class"
 						varClass = []
-						varClass["name"] = valVar
-						@varClass["name"]
+						variableMap[valVar] = varClass
+						currentClass = variableMap[valVar]
+						SCANNER_TYPE = SCANNER_CLASS
 						continue
 					}
 				elif val == nl or val == crlf
 					sourceCurrentLine++
 				}
+			case SCANNER_CLASS
+				while isWhiteSpace(source[a]) and (a+1) < sourceLen { a++ }
+				if source[a] == "}" {
+					a++
+					SCANNER_TYPE = SCANNER_IDENTIFIER
+				}
+				@"yea classic"
 		}
 	}
 	return true
