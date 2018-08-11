@@ -11,8 +11,9 @@
 [website](https://simple-lang.sourceforge.io)
 [FTextEditor](/modules/fultick/)
 [one]"11111111111111111111"
-[two]"this is a documenting project"
-three = "ok this is a vintage way of declaring string"
+[two]"this is a documenting project in double quote"
+[three]'this is in single quote'
+four = "ok this is a vintage way of declaring string"
 
 /*
 	Groups 

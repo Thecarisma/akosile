@@ -42,10 +42,11 @@ block startAkoParsing(sourceFile)
 						}
 					}
 					a++ a++
-					if source[a] == "(" or source[a] == '"' {
+					if source[a] == "(" or source[a] == '"' or source[a] == "'" {
 						switch source[a] {
 							case '(' litTemp = ')'
 							case '"' litTemp = '"'
+							case "'" litTemp = "'"
 						}
 						valVal = ""
 						while source[a+1] != litTemp and (a+1) < sourceLen {
@@ -59,8 +60,30 @@ block startAkoParsing(sourceFile)
 					#variableMap[valVar] = valVal
 				elif val == nl or val == crlf
 					sourceCurrentLine++
-				elif 
-					
+				elif isAlphaNum(val)
+					valVar = ""
+					while isAlphaNum(source[a]) or isPunctuation(source[a]) or isWhiteSpace(source[a]) and a < sourceLen {
+						display source[a]
+						a++
+						if source[a] == "=" {
+							break
+						}
+					}
+					if source[a] == "(" or source[a] == '"' or source[a] == "'" {
+						switch source[a] {
+							case '(' litTemp = ')'
+							case '"' litTemp = '"'
+							case "'" litTemp = "'"
+						}
+						valVal = ""
+						while source[a+1] != litTemp and (a+1) < sourceLen {
+							valVal += source[a++]
+							if !isAlphaNum(source[a]) and !isPunctuation(source[a]) and !isWhiteSpace(source[a]) {
+								throwAkoError("Invalid identifier '"+source[a]+"' near '"+valVal+"'",sourceCurrentLine,sourceFileName)
+							}
+						}
+					}
+					@valVar+" = "+valVal
 				}
 		}
 	}
