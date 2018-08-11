@@ -1,7 +1,6 @@
 
 call "simple/io/File.sim"
 call "simple/core/List.sim"
-call "akoscanner.sim"
 
 position = 0
 source = ""
@@ -24,49 +23,33 @@ block parseAkoFile(file)
 	return false
 	
 block startAkoParsing(source)
-	while peekAkoChar(0) != 1 {
-		switch peekAkoChar(0) {
-			case '"'
-				scanLiteral(source,position) 
-			default
-				if peekAkoChar(1) == -1 { break }
-				readAkoChar()
-		}		
+	SCANNER_IDENTIFIER = 0 SCANNER_LITERAL = 1
+	SCANNER_TYPE = SCANNER_IDENTIFIER
+	sourceLen = lengthOf(source)
+	for a = 0 to sourceLen {
+		val = source[a]
+		switch SCANNER_TYPE {
+			case SCANNER_IDENTIFIER
+				if val == "[" {
+					valVar = ""
+					while source[a+1] != "]" {
+						a++
+						valVar += source[a]
+					}
+					@valVar
+				}
+		}
 	}
 	return true
 	
-block parseAkoVariable(source,sourcePosition)
-	var = "" varandval = []
-	do {
-		var += source[position++]
-	} while source[sourcePosition()+1] != "]" 
-	skipWhiteSpace(source,position)
-	position++
-	@source[sourcePosition()]
-	if source[sourcePosition()] == "(" {
-		@">>>"+source[position+1]
-		varandval[var] = parseAkoValue(source,sourcePosition)
-	}
-	return varandval
+class AkoToken
 	
-block parseAkoValue(source,sourcePosition)
-	return "adew"
+	type location value variable location
 	
-#Scanner
-
-block scanLiteral(source,position)
-	value = ""
-	readAkoChar() 
-	while peekAkoChar(0) != '"' and peekAkoChar(0) != -1 {
-		charValue = readAkoChar()
-		if charValue == "\"
-			value += scanLiteralEscape(readAkoChar())
-		else
-			value += charValue
-		}
-	}
-	readAkoChar()
-	return value
-	
+	block AkoToken(variable,value,location,type)
+		this.type = type
+		this.variable = variable
+		this.value =  value
+		this.location = location
 	
 	
