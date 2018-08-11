@@ -7,6 +7,10 @@ block prepareDirectory(currentDir)
 			printAkoMessage("no directory specified assuming current directory",2)
 		currentDir = currentDirectory()
 	}	
+	if akoDestDir == null {
+			printAkoMessage("no output directory specified assuming current directory",2)
+		akoDestDir = currentDir
+	}	
 	path = new Directory(currentDir)
 		printAkoMessage("directory: "+path.absolutePath(),0)
 	akoFile = new File(path.absolutePath()+"map.ako")
@@ -17,9 +21,14 @@ block prepareDirectory(currentDir)
 			printAkoError("map.ako parsing failed")
 		}
 	}
-	processDirectory(path)
+	akoDestDirectory = new Directory(akoDestDir)
+	if !akoDestDirectory.exists() {
+		akoDestDirectory.create()
+	}
+	akoDestDir = akoDestDirectory.absolutePath()
+	processDirectory(path,currentDir)
 	
-block processDirectory(sourceDir)
+block processDirectory(sourceDir,currentDir)
 	files = sourceDir.listFiles()
 	filesLen = lengthOf(files)
 	for b = 0 to filesLen {
@@ -27,7 +36,7 @@ block processDirectory(sourceDir)
 		for c = 0 to supportedLen {
 			if stringEndsWith(files[b].absolutePath(),supportedSources[c]) {
 				@files[b].absolutePath()
-				createHtmls(files[b],supportedSources[c])
+				createHtmls(files[b],supportedSources[c],currentDir)
 				break
 			}
 		}
@@ -39,10 +48,10 @@ block processDirectory(sourceDir)
 		processDirectory(dirs[b])
 	}
 	
-block createHtmls(sourcePath,type)
-	htmlFilePath =  removeString(sourcePath.absolutePath(),type)+".html"
+block createHtmls(sourcePath,type,currentDir)
+	htmlFilePath = akoDestDir+removeString(sourcePath.absolutePath(),currentDir)
+	htmlFilePath =  removeString(htmlFilePath,type)+".html"
 	htmlFile = new File(htmlFilePath)
-	@destDir
 	#htmlFile.write("")
 	@htmlFilePath
 	__exit__
