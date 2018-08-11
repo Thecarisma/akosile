@@ -17,4 +17,35 @@ block prepareDirectory(currentDir)
 			printAkoError("map.ako parsing failed")
 		}
 	}
+	processDirectory(path)
 	
+block processDirectory(sourceDir)
+	files = sourceDir.listFiles()
+	filesLen = lengthOf(files)
+	for b = 0 to filesLen {
+		if stringEndsWith(files[b].absolutePath(),"") {
+			@files[b].absolutePath()
+			createHtmls(files[b])
+		}
+	}
+	dirs = sourceDir.listDirectories()
+	dirsLen = lengthOf(dirs)
+	for b = 0 to dirsLen {
+		@"moving into directory : "+dirs[b].absolutePath()
+		processDirectory(dirs[b])
+	}
+	
+block createHtmls(sourcePath)
+	htmlFilePath =  sourcePath.absolutePath()
+	__exit__
+
+
+
+
+
+
+
+
+
+
+
