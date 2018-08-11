@@ -1,6 +1,7 @@
 
 call "simple/io/File.sim"
 call "simple/core/List.sim"
+call "simple/utilities/Type.sim"
 
 position = 0
 source = ""
@@ -14,26 +15,31 @@ block sourcePosition()
 
 block parseAkoFile(file)
 	printAkoMessage("preparing to parse map.ako file",1)
-	source = file.readFileAsString()
-	if startAkoParsing(source) {
+	if startAkoParsing(file) {
 		return true
 	else
 		return false
 	}
 	return false
 	
-block startAkoParsing(source)
+block startAkoParsing(sourceFile)
 	SCANNER_IDENTIFIER = 0 SCANNER_LITERAL = 1
 	SCANNER_TYPE = SCANNER_IDENTIFIER
+	source = sourceFile.readFileAsString()
+	sourceFileName = sourceFile.name()
 	sourceLen = lengthOf(source)
+	sourceCurrentLine = 1
 	for a = 0 to sourceLen {
 		val = source[a]
 		switch SCANNER_TYPE {
 			case SCANNER_IDENTIFIER
 				if val == "[" {
 					valVar = ""
-					while source[a+1] != "]" {
+					while source[a+1] != "]" and (a+1) < sourceLen {
 						a++
+						if !isAlphaNum(source[a]) {
+							throwAkoError("Invalid identifier near '"+valVar+"'",sourceCurrentLine,sourceFileName)
+						}
 						valVar += source[a]
 					}
 					@valVar
