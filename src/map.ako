@@ -26,7 +26,8 @@
 */
 
 [Link] {
-	blog
+	[blog](https://blog.com)
+	[five]"5555555555555"
 }
 
 [four](number is four)
