@@ -45,16 +45,14 @@ block processDirectory(sourceDir,currentDir)
 	dirsLen = lengthOf(dirs)
 	for b = 0 to dirsLen {
 		@"moving into directory : "+dirs[b].absolutePath()
-		processDirectory(dirs[b])
+		processDirectory(dirs[b],currentDir)
 	}
 	
 block createHtmls(sourcePath,type,currentDir)
 	htmlFilePath = akoDestDir+removeString(sourcePath.absolutePath(),currentDir)
 	htmlFilePath =  removeString(htmlFilePath,type)+".html"
 	htmlFile = new File(htmlFilePath)
-	#htmlFile.write("")
-	@htmlFilePath
-	__exit__
+	htmlFile.write("")
 
 
 
