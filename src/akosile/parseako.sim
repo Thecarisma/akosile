@@ -29,7 +29,8 @@ block startAkoParsing(sourceFile)
 	sourceFileName = sourceFile.name()
 	sourceLen = lengthOf(source)
 	sourceCurrentLine = 1
-	currentClass = variableMap["__Main"]
+	currentClass = []
+	currentClassName = "__Main"
 	for a = 0 to sourceLen {
 		val = source[a]
 		switch SCANNER_TYPE {
@@ -43,7 +44,7 @@ block startAkoParsing(sourceFile)
 						}
 					}
 					a++ a++
-					while isWhiteSpace(source[a+1]) { a++ }
+					while isWhiteSpace(source[a++]) {}
 					if source[a] == "(" or source[a] == '"' or source[a] == "'" {
 						switch source[a] {
 							case '(' litTemp = ')'
@@ -60,19 +61,20 @@ block startAkoParsing(sourceFile)
 					variableMap[valVar] = valVal
 					elif source[a] == "{" 
 						varClass = []
-						variableMap[valVar] = varClass
-						currentClass = variableMap[valVar]
+						currentClass = varClass
+						currentClassName = valVar
 						SCANNER_TYPE = SCANNER_CLASS
 						continue
 					}
-				elif val == nl or val == crlf
-					sourceCurrentLine++
+				elif source[a] == '/' and source[a+1] == '*' a++ SCANNER_TYPE = SCANNER_COMMENT
+				elif val == nl or val == crlf sourceCurrentLine++
 				}
 			case SCANNER_CLASS
 				while isWhiteSpace(source[a]) and (a+1) < sourceLen { a++ }
 				if source[a] == "}" {
 					a++
 					SCANNER_TYPE = SCANNER_IDENTIFIER
+					variableMap[currentClassName] = currentClass
 					continue
 				}
 				if source[a] == "[" {
@@ -98,8 +100,7 @@ block startAkoParsing(sourceFile)
 								throwAkoError("Invalid identifier '"+source[a]+"' near '"+valVal+"'",sourceCurrentLine,sourceFileName)
 							}
 						}
-					@valVar+" = "+valVal
-					variableMap[valVar] = valVal
+					currentClass[valVar] = valVal
 					}
 				}
 				

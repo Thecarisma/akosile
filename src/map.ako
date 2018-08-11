@@ -28,6 +28,11 @@
 [Link] {
 	[blog](https://blog.com)
 	[five]"5555555555555"
+	/*
+		This should be omitted for sure
+		[doc](a doc really)
+		[rick](definitely not morty)
+	*/
 }
 
 [four](number is four)
