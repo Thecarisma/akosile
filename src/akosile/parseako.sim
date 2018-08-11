@@ -50,15 +50,17 @@ block startAkoParsing(sourceFile)
 						valVal = ""
 						while source[a+1] != litTemp and (a+1) < sourceLen {
 							valVal += source[a++]
-							if !isAlphaNum(source[a]) and !isPunctuation(source[a]) {
+							if !isAlphaNum(source[a]) and !isPunctuation(source[a]) and !isWhiteSpace(source[a]) {
 								throwAkoError("Invalid identifier '"+source[a]+"' near '"+valVal+"'",sourceCurrentLine,sourceFileName)
 							}
 						}
 					}
 					@valVar+" = "+valVal
 					#variableMap[valVar] = valVal
-				elif val == cr or val == nl or val == crlf
+				elif val == nl or val == crlf
 					sourceCurrentLine++
+				elif 
+					
 				}
 		}
 	}
