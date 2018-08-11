@@ -23,7 +23,7 @@ block parseAkoFile(file)
 	return false
 	
 block startAkoParsing(sourceFile)
-	SCANNER_IDENTIFIER = 0 SCANNER_COMMENT = 1 SCANNER_CLASS = 2
+	SCANNER_IDENTIFIER = 0 SCANNER_COMMENT = 1 SCANNER__GROUP = 2 SCANNER_COMMENT__GROUP = 3
 	SCANNER_TYPE = SCANNER_IDENTIFIER
 	source = sourceFile.readFileAsString()
 	sourceFileName = sourceFile.name()
@@ -63,13 +63,13 @@ block startAkoParsing(sourceFile)
 						varClass = []
 						currentClass = varClass
 						currentClassName = valVar
-						SCANNER_TYPE = SCANNER_CLASS
+						SCANNER_TYPE = SCANNER__GROUP
 						continue
 					}
 				elif source[a] == '/' and source[a+1] == '*' a++ SCANNER_TYPE = SCANNER_COMMENT
 				elif val == nl or val == crlf sourceCurrentLine++
 				}
-			case SCANNER_CLASS
+			case SCANNER__GROUP
 				while isWhiteSpace(source[a]) and (a+1) < sourceLen { a++ }
 				if source[a] == "}" {
 					a++
@@ -102,8 +102,21 @@ block startAkoParsing(sourceFile)
 						}
 					currentClass[valVar] = valVal
 					}
+				elif source[a] == '/' and source[a+1] == '*' a++ SCANNER_TYPE = SCANNER_COMMENT__GROUP
+				elif val == nl or val == crlf sourceCurrentLine++
 				}
-				
+			case SCANNER_COMMENT__GROUP
+				if source[a] == '*' and source[a+1] == '/' {
+					a++ SCANNER_TYPE = SCANNER__GROUP
+				else 
+					
+				}
+			case SCANNER_COMMENT
+				if source[a] == '*' and source[a+1] == '/' {
+					a++ SCANNER_TYPE = SCANNER_IDENTIFIER
+				else 
+					
+				}
 		}
 	}
 	return true
