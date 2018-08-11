@@ -66,6 +66,7 @@ block startAkoParsing(sourceFile)
 						SCANNER_TYPE = SCANNER__GROUP
 						continue
 					}
+				elif source[a] == '/' and source[a+1] == '*' a++ SCANNER_TYPE = SCANNER_COMMENT
 				elif val == nl or val == crlf sourceCurrentLine++
 				}
 			case SCANNER__GROUP
@@ -85,7 +86,8 @@ block startAkoParsing(sourceFile)
 						}
 					}
 					a++ a++
-					while isWhiteSpace(source[a+1]) { a++ }
+					while isWhiteSpace(source[a++]) { }
+					@source[a]
 					if source[a] == "(" or source[a] == '"' or source[a] == "'" {
 						switch source[a] {
 							case '(' litTemp = ')'
@@ -99,6 +101,7 @@ block startAkoParsing(sourceFile)
 								throwAkoError("Invalid identifier '"+source[a]+"' near '"+valVal+"'",sourceCurrentLine,sourceFileName)
 							}
 						}
+					@valVar
 					currentClass[valVar] = valVal
 					}
 				elif source[a] == '/' and source[a+1] == '*' a++ SCANNER_TYPE = SCANNER_COMMENT__GROUP
@@ -106,13 +109,13 @@ block startAkoParsing(sourceFile)
 				}
 			case SCANNER_COMMENT__GROUP
 				if source[a] == '*' and source[a+1] == '/' {
-					SCANNER_TYPE = SCANNER__GROUP
+					a++ SCANNER_TYPE = SCANNER__GROUP
 				else 
 					
 				}
 			case SCANNER_COMMENT
 				if source[a] == '*' and source[a+1] == '/' {
-					SCANNER_TYPE = SCANNER_IDENTIFIER
+					a++ SCANNER_TYPE = SCANNER_IDENTIFIER
 				else 
 					
 				}
