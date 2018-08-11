@@ -36,13 +36,22 @@ block startAkoParsing(sourceFile)
 				if val == "[" {
 					valVar = ""
 					while source[a+1] != "]" and (a+1) < sourceLen {
-						a++
+						valVar += source[a++]
 						if !isAlphaNum(source[a]) {
-							throwAkoError("Invalid identifier near '"+valVar+"'",sourceCurrentLine,sourceFileName)
+							throwAkoError("Invalid identifier '"+source[a]+"' near '"+valVar+"'",sourceCurrentLine,sourceFileName)
 						}
-						valVar += source[a]
 					}
-					@valVar
+					a++ a++
+					if source[a] == "(" {
+						valVal = ""
+						while source[a+1] != ")" and (a+1) < sourceLen {
+							valVal += source[a++]
+							if !isAlphaNum(source[a]) and !isPunctuation(source[a]) {
+								throwAkoError("Invalid identifier '"+source[a]+"' near '"+valVal+"'",sourceCurrentLine,sourceFileName)
+							}
+						}
+					}
+					@valVar+" = "+valVal
 				}
 		}
 	}
