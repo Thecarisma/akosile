@@ -3,29 +3,4 @@ call "akosile/akomisc.sim"
 call "akosile/preparedir.sim"
 call "simple/io/Directory.sim"
 
-block main()
-	dir = null
-	for a in cmdparams {
-		switch a {
-			case "--help" helpMessage() continue
-			case "-h" helpMessage() continue
-			case "--h" helpMessage() continue
-			case "--about" aboutAkosile() continue
-			case "-a" aboutAkosile() continue
-			case "--a" aboutAkosile() continue
-			case "--verbose" printVerbose = true continue
-			case "-v" printVerbose = true continue
-			case "--v" printVerbose = true continue
-			case "--silent" akoBeSilent = true continue
-			case "-s" akoBeSilent = true continue
-			case "--s" akoBeSilent = true continue
-			default
-				path = new Directory(a)
-				if path.isADirectory() {
-					dir = a 
-					continue
-				}
-		}
-	}
-	prepareDirectory(dir)
-	#@lengthOf(variableMap)
+bl = block x return "ade"
