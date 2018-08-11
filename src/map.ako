@@ -3,17 +3,16 @@
 	The following are variables that can be used in documentation by appending 
 	double dollar sign before it  e.g
 	@Code
-		$website 
-		$one
+		$$website 
+		$$one
 	@EndCode
 */
 
 [website](https://simple-lang.sourceforge.io)
-[FTextEditor](/modules/fultick/)
+[FTextEditor] (/modules/fultick/)
 [one]"11111111111111111111"
-[two]"this is a documenting project in double quote"
-[three]'this is in single quote'
-$$four = "ok this is a vintage way of declaring string"
+[two] "this is a documenting project in double quote"
+[three] 'this is in single quote'
 
 /*
 	Groups 
@@ -26,7 +25,7 @@ $$four = "ok this is a vintage way of declaring string"
 	@EndCode
 */
 
-Link {
+[Link] {
 	blog
 }
 
