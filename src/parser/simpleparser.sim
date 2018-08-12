@@ -9,6 +9,7 @@ block akoParseSimple(sourceFile,type,currentDir)
 	currentSourceData["name"] = fileSourceLink
 	
 	tempModule = [] 
+	tempModule["classes"] = []
 	tempClass = []
 
 	source = sourceFile.readFileAsString()	
@@ -36,13 +37,13 @@ block akoParseSimple(sourceFile,type,currentDir)
 					if (sourceLen - i) > 4 {
 						if (source[i]+source[i+1]+source[i+2]+source[i+3]+source[i+4]) == "class" {
 							className = ""
-							add(tempModule["classes"],tempClass)
 							i++ i++ i++ i++ i++ 
 							while isWhiteSpace(source[i]) { i++ }
 							while isAlphaNum(source[i]) or source[i] == "." {
 								className += source[i] i++
 							} 
 							tempClass["name"] = className
+							add(tempModule["classes"],tempClass)
 						}
 					}
 				}
@@ -53,11 +54,9 @@ block akoParseSimple(sourceFile,type,currentDir)
 					#display source[i]
 				}
 		}
-	}
-	add(tempModule["classes"],tempClass) add(currentSourceData["modules"],tempModule) 
+	} 
 	allAkoDocData[pureName] = currentSourceData
-	@tempModule
-	#@allAkoDocData[pureName][:modules][:classes]
+	@currentSourceData[:modules]
 
 
 block createHtmls(sourceFile,type,currentDir)
