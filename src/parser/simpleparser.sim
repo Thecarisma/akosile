@@ -2,7 +2,8 @@
 block akoParseSimple(sourceFile,type,currentDir)
 	fileName = sourceFile.name()
 	fsl = removeString(sourceFile.absolutePath(),currentDir)
-	fileSourceLink =  removeString(fsl,type)+".html"
+	fileSourceLink =  cureHtmlLink(removeString(fsl,type)+".html") #allAkoDocLinks["currentDir"]+
+	allAkoDocLinks[removeString(fileName,type)] = fileSourceLink
 	@fileSourceLink
 
 	source = sourceFile.readFileAsString()	

@@ -8,6 +8,9 @@ akoDestDir = null
 
 variableMap = []
 supportedSources = [".sim"]
+allAkoDocLinks = [
+	:currentDir = "./"
+]
 
 
 block printAkoMessage(message,type)
@@ -41,4 +44,5 @@ block throwAkoError(message,line,fileName)
 	println("                  In Line "+line+" in file "+fileName)
 	exit(0)
 	
-	
+block cureHtmlLink(dirtyLink)
+	return dirtyLink
