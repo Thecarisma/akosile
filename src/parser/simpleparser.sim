@@ -5,13 +5,17 @@ block akoParseSimple(sourceFile,type,currentDir)
 	fileSourceLink =  cureHtmlLink(removeString(fsl,type)+".html") #allAkoDocLinks["currentDir"]+
 	allAkoDocLinks[pureName] = fileSourceLink
 	currentSourceData = []
+	currentSourceData["modules"] = []
 	currentSourceData["name"] = fileSourceLink
+	
+	tempModule = [] hasAModule = false
 
 	source = sourceFile.readFileAsString()	
 	TOKEN_UNUSED =  0 TOKEN_MULTILINE_COMMENT = 1 
 	TOKEN_TYPE = TOKEN_UNUSED
 	sourceLen = lengthOf(source)
 	for i = 0 to sourceLen {
+		if i == sourceLen { add(currentSourceData["modules"],tempModule) break }
 		switch TOKEN_TYPE {
 			case TOKEN_UNUSED 
 				if source[i] == '/' and source[i+1] == '*' i++ TOKEN_TYPE = TOKEN_MULTILINE_COMMENT
@@ -19,12 +23,13 @@ block akoParseSimple(sourceFile,type,currentDir)
 					if (sourceLen - i) > 5 {
 						if (source[i]+source[i+1]+source[i+2]+source[i+3]+source[i+4]+source[i+5]) == "module" {
 							moduleName = ""
+							add(currentSourceData["modules"],tempModule)
 							i++ i++ i++ i++ i++ i++
 							while isWhiteSpace(source[i]) { i++ }
 							while isAlphaNum(source[i]) or source[i] == "." {
 								moduleName += source[i] i++
 							} 
-							currentSourceData["module"] = moduleName
+							tempModule["name"] = moduleName
 						}
 					}
 				}
@@ -37,7 +42,7 @@ block akoParseSimple(sourceFile,type,currentDir)
 		}
 	}
 	allAkoDocData[pureName] = currentSourceData
-	@allAkoDocData[pureName]
+	@allAkoDocData[pureName][:modules]
 
 
 block createHtmls(sourceFile,type,currentDir)
