@@ -1,10 +1,12 @@
 
-block akoParseSimple(sourcePath,type,currentDir)
-	
+block akoParseSimple(sourceFile,type,currentDir)
+	source = sourceFile.readFileAsString()
+	TOKEN_IDENTIFIER =  0 TOKEN_MULTILINE_COMMENT = 1 TOKEN_LITERAL_1 = 2 TOKEN_LITERAL_2 = 3
+	TOKEN_TYPE = TOKEN_IDENTIFIER
 
 
-block createHtmls(sourcePath,type,currentDir)
-	htmlFilePath = akoDestDir+removeString(sourcePath.absolutePath(),currentDir)
+block createHtmls(sourceFile,type,currentDir)
+	htmlFilePath = akoDestDir+removeString(sourceFile.absolutePath(),currentDir)
 	htmlFilePath =  removeString(htmlFilePath,type)+".html"
 	htmlFile = new File(htmlFilePath)
 	htmlFile.write("")
