@@ -11,6 +11,11 @@ supportedSources = [".sim"]
 allAkoDocLinks = [
 	:currentDir = "./"
 ]
+allAkoDocData [
+	[
+		:title = "default"
+	]
+]
 
 
 block printAkoMessage(message,type)

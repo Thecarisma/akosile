@@ -15,10 +15,15 @@ block akoParseSimple(sourceFile,type,currentDir)
 			case TOKEN_UNUSED 
 				if source[i] == '/' and source[i+1] == '*' i++ TOKEN_TYPE = TOKEN_MULTILINE_COMMENT
 				else
-					if (source[i]+source[i+1]+
-					source[i+2]+source[i+3]+source[i+4]+
-					source[i+5]) == "module" {
-						@"yea a module"
+					if (sourceLen - i) > 5 {
+						if (source[i]+source[i+1]+source[i+2]+source[i+3]+source[i+4]+source[i+5]) == "module" {
+							@"yea a module"
+							i++ i++ i++ i++ i++ i++
+							while isWhiteSpace(source[i]) { i++ }
+							while isAlphaNum(source[i]) or source[i] == "." {
+								display source[i] i++
+							} @""
+						}
 					}
 				}
 			case TOKEN_MULTILINE_COMMENT
