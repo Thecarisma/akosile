@@ -1,6 +1,6 @@
 
-call "akosile/akomisc.sim"
-call "akosile/preparedir.sim"
+call "./akosile/akomisc.sim"
+call "./akosile/preparedir.sim"
 call "simple/io/Directory.sim"
 
 block main()
@@ -23,6 +23,9 @@ block main()
 			case "--destination" akoDestDir = cmdparams[a++]
 			case "-ds" akoDestDir = cmdparams[a++]
 			case "--ds" akoDestDir = cmdparams[a++]
+			case "--directory" dir = new Directory(cmdparams[a++])
+			case "-d" dir = new Directory(cmdparams[a++])
+			case "--d" dir = new Directory(cmdparams[a++])
 			default
 				path = new Directory(cmdparams[a])
 				if path.isADirectory() {

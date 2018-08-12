@@ -1,8 +1,19 @@
 
 block akoParseSimple(sourceFile,type,currentDir)
 	source = sourceFile.readFileAsString()
-	TOKEN_IDENTIFIER =  0 TOKEN_MULTILINE_COMMENT = 1 TOKEN_LITERAL_1 = 2 TOKEN_LITERAL_2 = 3
-	TOKEN_TYPE = TOKEN_IDENTIFIER
+	TOKEN_UNUSED =  0 TOKEN_MULTILINE_COMMENT = 1 
+	TOKEN_TYPE = TOKEN_UNUSED
+	sourceLen = lengthOf(source)
+	for i = 0 to sourceLen {
+		switch TOKEN_TYPE {
+			case TOKEN_UNUSED 
+				if source[i] == '/' and source[i+1] == '*' i++ type = TOKEN_MULTILINE_COMMENT
+				}
+			case TOKEN_MULTILINE_COMMENT
+				@source[i]
+		}
+	}
+	__exit__
 
 
 block createHtmls(sourceFile,type,currentDir)
