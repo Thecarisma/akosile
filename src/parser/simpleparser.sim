@@ -47,7 +47,7 @@ block akoParseSimple(sourceFile,type,currentDir)
 							} 
 							tempClass["name"] = className
 						elif (source[i]+source[i+1]+source[i+2]+source[i+3]+source[i+4]) == "block" 
-							add(tempClass["blocks"],tempBlock)
+							add(tempClass["blocks"],tempBlock) tempBlock = []
 							blockName = ""
 							i++ i++ i++ i++ i++ 
 							while isWhiteSpace(source[i]) { i++ }
