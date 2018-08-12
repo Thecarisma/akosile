@@ -1,0 +1,29 @@
+
+
+.ako-syntax-code {
+	background-color:#eff5ff;
+	margin:2%;
+	padding:1%;
+	overflow: auto;
+}
+
+.ako-syntax-code-code-wrap {
+	white-space: pre-wrap;
+}
+
+/* simple-lang */
+
+.ako-syntax-code-simple .ako-syntax-code-reserved-word {
+	color:blue;
+	font-weight:bold;
+}
+
+.ako-syntax-code-simple .ako-syntax-code-number {
+	color:red;
+	font-weight:bold;
+}
+
+.ako-syntax-code-simple .ako-syntax-code-literal {
+	color:orange;
+	font-weight:bold;
+}
