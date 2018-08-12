@@ -11,6 +11,8 @@ block akoParseSimple(sourceFile,type,currentDir)
 	tempModule = [] 
 	tempModule["classes"] = []
 	tempClass = []
+	tempClass["blocks"] = []
+	tempBlock = []
 
 	source = sourceFile.readFileAsString()	
 	TOKEN_UNUSED =  0 TOKEN_MULTILINE_COMMENT = 1 
@@ -36,6 +38,7 @@ block akoParseSimple(sourceFile,type,currentDir)
 					}
 					if (sourceLen - i) > 4 {
 						if (source[i]+source[i+1]+source[i+2]+source[i+3]+source[i+4]) == "class" {
+							add(tempModule["classes"],tempClass)
 							className = ""
 							i++ i++ i++ i++ i++ 
 							while isWhiteSpace(source[i]) { i++ }
@@ -43,7 +46,15 @@ block akoParseSimple(sourceFile,type,currentDir)
 								className += source[i] i++
 							} 
 							tempClass["name"] = className
-							add(tempModule["classes"],tempClass)
+						elif (source[i]+source[i+1]+source[i+2]+source[i+3]+source[i+4]) == "block" 
+							add(tempClass["blocks"],tempBlock)
+							blockName = ""
+							i++ i++ i++ i++ i++ 
+							while isWhiteSpace(source[i]) { i++ }
+							while isAlphaNum(source[i]) or source[i] == "." {
+								blockName += source[i] i++
+							} 
+							tempBlock["name"] = blockName
 						}
 					}
 				}
@@ -54,7 +65,8 @@ block akoParseSimple(sourceFile,type,currentDir)
 					#display source[i]
 				}
 		}
-	} 
+	}
+	add(tempModule["classes"],tempClass) add(currentSourceData["modules"],tempModule) 
 	allAkoDocData[pureName] = currentSourceData
 	@currentSourceData[:modules]
 
