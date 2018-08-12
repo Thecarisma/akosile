@@ -1,6 +1,11 @@
 
 block akoParseSimple(sourceFile,type,currentDir)
-	source = sourceFile.readFileAsString()
+	fileName = sourceFile.name()
+	fsl = removeString(sourceFile.absolutePath(),currentDir)
+	fileSourceLink =  removeString(fsl,type)+".html"
+	@fileSourceLink
+
+	source = sourceFile.readFileAsString()	
 	TOKEN_UNUSED =  0 TOKEN_MULTILINE_COMMENT = 1 
 	TOKEN_TYPE = TOKEN_UNUSED
 	sourceLen = lengthOf(source)
@@ -11,13 +16,12 @@ block akoParseSimple(sourceFile,type,currentDir)
 				}
 			case TOKEN_MULTILINE_COMMENT
 				if source[i] == '*' and source[i+1] == '/' and (source[i+2] != '"' or source[i+2] != "'") {
-					__exit__
+					TOKEN_TYPE = TOKEN_UNUSED
 				else
-					display source[i]
+					#display source[i]
 				}
 		}
 	}
-	__exit__
 
 
 block createHtmls(sourceFile,type,currentDir)
