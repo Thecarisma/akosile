@@ -23,9 +23,9 @@ block main()
 			case "--destination" akoDestDir = cmdparams[a++]
 			case "-ds" akoDestDir = cmdparams[a++]
 			case "--ds" akoDestDir = cmdparams[a++]
-			case "--directory" dir = new Directory(cmdparams[a++])
-			case "-d" dir = new Directory(cmdparams[a++])
-			case "--d" dir = new Directory(cmdparams[a++])
+			case "--directory" dir = cmdparams[a++]
+			case "-d" dir = cmdparams[a++]
+			case "--d" dir = cmdparams[a++]
 			default
 				path = new Directory(cmdparams[a])
 				if path.isADirectory() {
