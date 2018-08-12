@@ -1,4 +1,10 @@
 
 block akoParseSimple(sourcePath,type,currentDir)
+	
 
 
+block createHtmls(sourcePath,type,currentDir)
+	htmlFilePath = akoDestDir+removeString(sourcePath.absolutePath(),currentDir)
+	htmlFilePath =  removeString(htmlFilePath,type)+".html"
+	htmlFile = new File(htmlFilePath)
+	htmlFile.write("")

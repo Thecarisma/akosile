@@ -1,6 +1,7 @@
 
 call "simple/system/System.sim"
 call "parseako.sim"
+call "../parser/simpleparser.sim"
 
 block prepareDirectory(currentDir)
 	if currentDir == null {
@@ -35,8 +36,9 @@ block processDirectory(sourceDir,currentDir)
 		supportedLen = lengthOf(supportedSources)
 		for c = 0 to supportedLen {
 			if stringEndsWith(files[b].absolutePath(),supportedSources[c]) {
-				@files[b].absolutePath()
-				createHtmls(files[b],supportedSources[c],currentDir)
+				if supportedSources[c] == ".sim" {
+					akoParseSimple(files[b],supportedSources[c],currentDir)
+				}
 				break
 			}
 		}
@@ -48,11 +50,7 @@ block processDirectory(sourceDir,currentDir)
 		processDirectory(dirs[b],currentDir)
 	}
 	
-block createHtmls(sourcePath,type,currentDir)
-	htmlFilePath = akoDestDir+removeString(sourcePath.absolutePath(),currentDir)
-	htmlFilePath =  removeString(htmlFilePath,type)+".html"
-	htmlFile = new File(htmlFilePath)
-	htmlFile.write("")
+
 
 
 
