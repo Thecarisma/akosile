@@ -11,7 +11,7 @@ supportedSources = [".sim"]
 allAkoDocLinks = [
 	:currentDir = "./"
 ]
-allAkoDocData [
+allAkoDocData = [
 	[
 		:title = "default"
 	]

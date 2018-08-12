@@ -4,7 +4,8 @@ block akoParseSimple(sourceFile,type,currentDir)
 	fsl = removeString(sourceFile.absolutePath(),currentDir)
 	fileSourceLink =  cureHtmlLink(removeString(fsl,type)+".html") #allAkoDocLinks["currentDir"]+
 	allAkoDocLinks[pureName] = fileSourceLink
-	@allAkoDocLinks["FWidget"]
+	currentSourceData = []
+	currentSourceData["name"] = fileSourceLink
 
 	source = sourceFile.readFileAsString()	
 	TOKEN_UNUSED =  0 TOKEN_MULTILINE_COMMENT = 1 
@@ -17,12 +18,13 @@ block akoParseSimple(sourceFile,type,currentDir)
 				else
 					if (sourceLen - i) > 5 {
 						if (source[i]+source[i+1]+source[i+2]+source[i+3]+source[i+4]+source[i+5]) == "module" {
-							@"yea a module"
+							moduleName = ""
 							i++ i++ i++ i++ i++ i++
 							while isWhiteSpace(source[i]) { i++ }
 							while isAlphaNum(source[i]) or source[i] == "." {
-								display source[i] i++
-							} @""
+								moduleName += source[i] i++
+							} 
+							currentSourceData["module"] = moduleName
 						}
 					}
 				}
@@ -34,6 +36,8 @@ block akoParseSimple(sourceFile,type,currentDir)
 				}
 		}
 	}
+	allAkoDocData[pureName] = currentSourceData
+	@allAkoDocData[pureName]
 
 
 block createHtmls(sourceFile,type,currentDir)
