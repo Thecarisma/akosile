@@ -5,6 +5,7 @@ printVerbose = false
 akoBeSilent = false
 
 akoDestDir = null
+templateName = "default"
 
 variableMap = []
 supportedSources = [".sim"]
@@ -49,5 +50,15 @@ block throwAkoError(message,line,fileName)
 	println("                  In Line "+line+" in file "+fileName)
 	exit(0)
 	
-block cureHtmlLink(dirtyLink)
-	return dirtyLink
+block getRelativeLink(tempLink)
+	ftempLink = ""
+	splited = splitString(tempLink,'/')
+	splitedLen = lengthOf(splited)
+	for a = 0 to splitedLen - 1 {
+		if splited[a] == '.' {
+			ftempLink += "./"
+		else
+			ftempLink += "../"
+		}
+	}
+	return ftempLink

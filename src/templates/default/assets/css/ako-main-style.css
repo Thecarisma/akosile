@@ -7,7 +7,10 @@ body {
   overflow: hidden;
   background-color: white;
   padding:1%;
+  top:0px;
   border-bottom: 2px solid #ebeef4;
+	position:fixed;
+	width:100%;
 }
 
 .ako-topnav a {
@@ -19,7 +22,7 @@ body {
   font-size: 15px;
   vertical-align: middle;
   margin-left:2px;
-  background-color: #dcedf7;
+  background-color: rgb(241,241,241);
 }
 
 .ako-topnav .header-logo {
@@ -32,7 +35,7 @@ body {
 }
 
 .ako-topnav a.active {
-  background-color: #2673a0;
+  background-color: #7f8796;
   color: white;
 }
 
@@ -44,7 +47,9 @@ body {
 }
 
 .ako-main-content {
-	margin-left:15%;
+	margin-left:16%;
+	margin-top:80px;
+	overflow: auto;
 }
 
 /* Main Side bar */
@@ -54,17 +59,20 @@ body {
 	width:14%;
 	display: block;
 	float:left;
-	margin:1%;
+	margin-left:1%;
+	height:100%;
+	position:fixed;
+	overflow:auto;
+	padding:5px;
+	background-color:rgb(241,241,241);
 }
 
-.ako-main-sidebar {
-	display: block;
-	background-color:#dcedf7;
-	padding:5px;
+#ako-sidebar {
+	margin-bottom:100px;
 }
 
 .ako-main-sidebar .ako-sidebar-button {
-	height:100vh !important;
+	height:100% !important;
 	width:10px;
 	float:right;
 	border:0px;
@@ -78,7 +86,7 @@ body {
 .ako-main-sidebar a {
 	text-decoration: none !important;
 	float:left;
-	color:#2578a8;
+	color:#7f8796;
 }
 
 .ako-sidebar-heading {
@@ -89,15 +97,15 @@ body {
 
 /**/
 .ako-block-title {
-	background-color:#c4deed;
-	width:95% !important;
+	background-color:#7f8796;
+	width:97.5% !important;
 	padding:10px;
 	margin-top:5px;
-	margin-left:1.5%;
 	margin-bottom:5px;
 	border-radius:5%;
+	margin-right:1%;
 	display: block;
 	font-weight:bold;
-	color:#2578a8;
+	color:white;
 	font-size:20px;
 }

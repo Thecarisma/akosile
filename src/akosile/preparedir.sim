@@ -2,6 +2,7 @@
 call "simple/system/System.sim"
 call "parseako.sim"
 call "../parser/simpleparser.sim"
+call "../controller/generatehtml.sim"
 
 block prepareDirectory(currentDir)
 	if currentDir == null {
@@ -12,7 +13,7 @@ block prepareDirectory(currentDir)
 			printAkoMessage("no output directory specified assuming current directory",2)
 		akoDestDir = currentDir
 	}	
-	path = new Directory(currentDir)
+	path = new Directory(currentDir) currentDir = path.absolutePath()
 		printAkoMessage("directory: "+path.absolutePath(),0)
 	akoFile = new File(path.absolutePath()+"map.ako")
 	if akoFile.exists() {
@@ -28,6 +29,7 @@ block prepareDirectory(currentDir)
 	}
 	akoDestDir = akoDestDirectory.absolutePath()
 	processDirectory(path,currentDir)
+	generateDocWebsite()
 	
 block processDirectory(sourceDir,currentDir)
 	files = sourceDir.listFiles()
@@ -46,7 +48,7 @@ block processDirectory(sourceDir,currentDir)
 	dirs = sourceDir.listDirectories()
 	dirsLen = lengthOf(dirs)
 	for b = 0 to dirsLen {
-		@"moving into directory : "+dirs[b].absolutePath()
+		printAkoMessage("documenting : "+removeString(dirs[b].absolutePath(),currentDir),0)
 		processDirectory(dirs[b],currentDir)
 	}
 	

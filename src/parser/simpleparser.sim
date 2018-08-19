@@ -2,19 +2,30 @@
 block akoParseSimple(sourceFile,type,currentDir)
 	pureName = removeString(sourceFile.name(),type)
 	fsl = removeString(sourceFile.absolutePath(),currentDir)
-	fileSourceLink =  cureHtmlLink(removeString(fsl,type)+".html") #allAkoDocLinks["currentDir"]+
+	fileSourceLink =  removeString(fsl,type)+".html" #allAkoDocLinks["currentDir"]+
 	allAkoDocLinks[pureName] = fileSourceLink
 	currentSourceData = []
+	
 	currentSourceData["modules"] = []
-	currentSourceData["name"] = fileSourceLink
+	currentSourceData["blocks"] = []
+	currentSourceData["classes"] = []
+	currentSourceData["htmlpath"] = replaceString(fileSourceLink,'\','/')
+	currentSourceData["title"] = sourceFile.name()
+	currentSourceData["htmlname"] = pureName+".html"
 	
 	tempModule = [] 
 	tempModule["classes"] = []
 	tempClass = []
 	tempClass["blocks"] = []
 	tempBlock = []
+	
+	hasModule = false
+	hasClass = false
+	currentModuleValue = null
+	currentClassName = null
+	currentComment = ""
 
-	source = sourceFile.readFileAsString()	
+	source = sourceFile.readFileAsString()	+ " "
 	TOKEN_UNUSED =  0 TOKEN_MULTILINE_COMMENT = 1 
 	TOKEN_TYPE = TOKEN_UNUSED
 	sourceLen = lengthOf(source)
@@ -27,52 +38,63 @@ block akoParseSimple(sourceFile,type,currentDir)
 					if (sourceLen - i) > 5 {
 						if (source[i]+source[i+1]+source[i+2]+source[i+3]+source[i+4]+source[i+5]) == "module" {
 							moduleName = ""
-							add(currentSourceData["modules"],tempModule)
 							i++ i++ i++ i++ i++ i++
 							while isWhiteSpace(source[i]) { i++ }
 							while isAlphaNum(source[i]) or source[i] == "." {
 								moduleName += source[i] i++
 							} 
-							tempModule["name"] = moduleName
-						}
+							tempModule["comment"] = currentComment currentComment = ""
+							currentModuleValue = moduleName
+							currentSourceData["modules"][currentModuleValue] = tempModule
+							if !hasModule { hasModule = true }
+						} 
 					}
 					if (sourceLen - i) > 4 {
 						if (source[i]+source[i+1]+source[i+2]+source[i+3]+source[i+4]) == "class" {
-							add(tempModule["classes"],tempClass)
 							className = ""
 							i++ i++ i++ i++ i++ 
 							while isWhiteSpace(source[i]) { i++ }
 							while isAlphaNum(source[i]) or source[i] == "." {
-								className += source[i] i++
+								className += source[i] 
+								i++
 							} 
-							tempClass["name"] = className
+							tempClass["comment"] = currentComment currentComment = ""
+							currentClassName = className
+							if hasModule {
+								currentSourceData["modules"][currentModuleValue]["classes"][currentClassName] = tempClass
+							else
+								currentSourceData["classes"][currentClassName] = tempClass
+							}
+							if !hasClass { hasClass = true }
 						elif (source[i]+source[i+1]+source[i+2]+source[i+3]+source[i+4]) == "block" 
-							add(tempClass["blocks"],tempBlock) tempBlock = []
 							blockName = ""
 							i++ i++ i++ i++ i++ 
 							while isWhiteSpace(source[i]) { i++ }
 							while isAlphaNum(source[i]) or source[i] == "." {
 								blockName += source[i] i++
 							} 
-							tempBlock["name"] = blockName
+							tempBlock["comment"] = currentComment currentComment = ""
+							if hasModule {
+								currentSourceData["modules"][currentModuleValue]["classes"][currentClassName]["blocks"][blockName] = tempBlock 
+							elif hasClass
+								currentSourceData["classes"][currentClassName]["blocks"][blockName] = tempBlock 
+							else
+								currentSourceData["blocks"][blockName] = tempBlock
+							}
+							tempBlock = []
 						}
 					}
-				}
+				end
 			case TOKEN_MULTILINE_COMMENT
 				if source[i] == '*' and source[i+1] == '/' and (source[i+2] != '"' or source[i+2] != "'") {
 					TOKEN_TYPE = TOKEN_UNUSED
 				else
-					#display source[i]
+					currentComment += source[i]
 				}
 		}
-	}
-	add(tempModule["classes"],tempClass) add(currentSourceData["modules"],tempModule) 
-	allAkoDocData[pureName] = currentSourceData
-	@currentSourceData[:modules]
+	} 
+	add(tempModule["classes"],tempClass) 
+	add(currentSourceData["modules"],tempModule) 
+	allAkoDocData + currentSourceData
 
 
-block createHtmls(sourceFile,type,currentDir)
-	htmlFilePath = akoDestDir+removeString(sourceFile.absolutePath(),currentDir)
-	htmlFilePath =  removeString(htmlFilePath,type)+".html"
-	htmlFile = new File(htmlFilePath)
-	htmlFile.write("")

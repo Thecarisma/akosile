@@ -1,10 +1,10 @@
 
 
 .ako-syntax-code {
-	background-color:#eff5ff;
-	margin:2%;
+	background-color:rgb(241,241,241);
 	padding:1%;
 	overflow: auto;
+	margin-right:1%;
 }
 
 .ako-syntax-code-code-wrap {

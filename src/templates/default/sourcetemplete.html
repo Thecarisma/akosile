@@ -9,26 +9,58 @@
 <body>
 	<!-- Header -->
 	<div class="ako-topnav">
-		<!--<a href="#home" style="background-color:white;"><img class="header-logo" src="{{assets-folder}}/images/default-logo.jpg" /></a>-->
+		<!--<a href="#home" style="background-color:white;"><img class="header-logo" src="assets/images/default-logo.jpg" /></a>-->
 		{{links-to-current-file}}
 	</div>
 	<!-- End Header -->
 	
 	<!-- content -->
 	<div class="ako-main-sidebar" id="main-ako-sidebar">
-		<button class="ako-sidebar-button" id="ako-sidebar-button" onclick="akoOpenCloseSidebar()"></button>
+		<!--<button class="ako-sidebar-button" id="ako-sidebar-button" onclick="akoOpenCloseSidebar()"></button> -->
 		<div id="ako-sidebar">
-			{{current-file-id-link}}
 			{{block-in-current-file-ids}}
 		</div>
 	</div>
 
 	<div class="ako-main-content" id="ako-main-content">
-		<div id="{{current-file-id}}">
-			{{main-contents}}
+		<div id="File.sim">
+			<h2>File</h2>
+			<p>In this example, the sidebar is hidden (style="display:none")</p>
+			<p>It is shown when you click on the menu icon in the top left corner.</p>
+			<p>When it is opened, it shifts the page content to the right.</p>
+			<p>We use JavaScript to add a 25% left margin to the div element with id="main" when this happens. The value "25%" matches the width of the sidebar.</p>
+			<div id="File.sim.create" class="ako-block">
+				<a href="#File.sim.create" class="ako-block-title"> block create()</a>
+				<pre class="ako-syntax-code">block create(var)</pre>
+				<pre class="ako-syntax-code ako-syntax-code-simple"><code>
+<span class="ako-syntax-code-reserved-word">block</span> processDirectory(sourceDir,currentDir)
+	files = sourceDir.listFiles()
+	filesLen = lengthOf(files)
+	<span class="ako-syntax-code-reserved-word">for</span> b = <span class="ako-syntax-code-number">0</span> <span class="ako-syntax-code-reserved-word">to</span> filesLen {
+		supportedLen = lengthOf(supportedSources)
+		<span class="ako-syntax-code-reserved-word">for</span> c = <span class="ako-syntax-code-number">0</span> <span class="ako-syntax-code-reserved-word">to</span> supportedLen {
+			<span class="ako-syntax-code-reserved-word">if</span> stringEndsWith(files[b].absolutePath(),supportedSources[c]) {
+				@files[b].absolutePath()
+				createHtmls(files[b],supportedSources[c],currentDir)
+				<span class="ako-syntax-code-reserved-word">break</span>
+			}
+		}
+	}
+	dirs = sourceDir.listDirectories()
+	dirsLen = lengthOf(dirs)
+	<span class="ako-syntax-code-reserved-word">for</span> b = <span class="ako-syntax-code-number">0</span> <span class="ako-syntax-code-reserved-word">to</span> dirsLen {
+		@<span class="ako-syntax-code-literal">"moving into directory : "</span>+dirs[b].absolutePath()
+		processDirectory(dirs[b],currentDir)
+	}
+				</code></pre>
+				<p>In this example, the sidebar is hidden (style="display:none")</p>
+				<p>It is shown when you click on the menu icon in the top left corner.</p>
+				<p>When it is opened, it shifts the page content to the right.</p>
+				<p>We use JavaScript to add a 25% left margin to the div element with id="main" when this happens. The value "25%" matches the width of the sidebar.</p>
+			</div>
 		</div>
 	</div>
-	<script src="{{assets-folder}}/js/ako-main-script.js"></script>
+	<script src="assets/js/ako-main-script.js"></script>
 
 </body>
 </html>
