@@ -12,7 +12,8 @@ block createHtml(akoDocData)
 	_file = new File("./templates/"+templateName+"/sourcetemplete.html")
 	content = _file.readFileAsString()
 	
-	__linkToFile = ""
+	__linkToFile = "" 
+	__mainContent = "<p>"+formatHTMLComment(akoDocData[:prefix])+"</p><br />"
 	splited = splitString(akoDocData[:htmlpath],'/')
 	splitedLen = lengthOf(splited)
 	for a = 0 to splitedLen - 1 {
@@ -24,62 +25,117 @@ block createHtml(akoDocData)
 		}
 	}
 	__linkToFile += '<a class="active" href="'+akoDocData[:htmlpath]+'">'+akoDocData[:title]+'</a>' 
-	
-	__sideBarNavigations = '<a href="#" ><span class="ako-sidebar-heading">'+akoDocData[:title]+'</span></a><br />'
+	__sideBarNavigations = '<a href="#'+akoDocData[:title]+'" ><span class="ako-sidebar-heading">'+akoDocData[:title]+'</span></a><br />'
 	#Blocks
 	blocks = akoDocData[:blocks] #fix index after fix in simple-lang source
 	outBlocksLen = lengthOf(blocks)
-	if outBlocksLen >= 0 { __sideBarNavigations += '<a href="#" ><span class="ako-sidebar-heading">&emsp;Blocks</span></a><br />' } 
 	for d = 0 to outBlocksLen {
 		blockName = blocks[d][1]
-		blockComment = blocks[d][2]["comment"]
-		__sideBarNavigations += '<a href="'+akoDocData[:htmlname]+'#'+blockName+'" >&emsp;&emsp;'+blockName+'()</a><br />'+nl
+		blockAbsoluteName = blocks[d][2]["abName"]
+		blockComment = formatHTMLComment(blocks[d][2]["comment"])
+		blockId = akoDocData[:name]+'.'+blockName
+		__sideBarNavigations += '<a href="#'+blockId+'">&emsp;'+blockName+'()</a><br />'+nl
+		__mainContent += '<div id="'+blockId+'" class="ako-block">
+			<a href="#'+blockId+'" class="ako-block-title"> block '+blockAbsoluteName+'</a>
+		<p>'+blockComment+'</p></div>'
 	}
+	
 	#Classes
 	classes = akoDocData[:classes] #fix index after fix in simple-lang source
 	outClassesLen = lengthOf(classes)
-	if outClassesLen >= 0 { __sideBarNavigations += '<a href="#" ><span class="ako-sidebar-heading">&emsp;Classes</span></a><br />' } 
 	for d = 0 to outClassesLen {
 		className = classes[d][1]
-		classComment = classes[d][2]["comment"]
-		__sideBarNavigations += '<a href="'+akoDocData[:htmlname]+'#'+className+'" >&emsp;&emsp;'+className+'()</a><br />'+nl
+		classAbsoluteName = classes[d][2]["abName"]
+		classComment = formatHTMLComment(classes[d][2]["comment"])
+		classId = akoDocData[:name]+'.'+className
+		__sideBarNavigations += '<a href="#'+classId+'" >&emsp;'+className+'</a><br />'+nl
+		__mainContent += '<h1 id="'+classId+'">'+classAbsoluteName+'</h1>
+				<p>'+classComment+'</p>'
+			
 		blocks = classes[d][2][:blocks] #fix index after fix in simple-lang source
 		outBlocksLen = lengthOf(blocks)
 		for e = 0 to outBlocksLen {
 			blockName = blocks[e][1]
-			blockComment = blocks[e][2]["comment"]
-			__sideBarNavigations += '<a href="'+akoDocData[:htmlname]+'#'+blockName+'" >&emsp;&emsp;&emsp;'+blockName+'()</a><br />'+nl
+			blockAbsoluteName = blocks[e][2]["abName"]
+			blockComment = formatHTMLComment(blocks[e][2]["comment"])
+			blockId = akoDocData[:name]+'.'+blockName
+			__sideBarNavigations += '<a href="#'+blockId+'" >&emsp;'+blockName+'()</a><br />'+nl
+			__mainContent += '<div id="'+blockId+'" class="ako-block">
+				<a href="#'+blockId+'" class="ako-block-title"> block '+blockAbsoluteName+'</a>
+			<p>'+blockComment+'</p></div>'
 		}
 	}
+	
+	#MODULES
 	modules = akoDocData[:modules] #fix index after fix in simple-lang source
-	outModulesLen = lengthOf(blocks)
-	if outModulesLen >= 0 { __sideBarNavigations += '<a href="#" ><span class="ako-sidebar-heading">&emsp;Modules</span></a><br />' } 
+	outModulesLen = lengthOf(modules)
 	for d = 0 to outModulesLen {
 		moduleName = modules[d][1]
-		moduleComment = modules[d][2]["comment"]
-		__sideBarNavigations += '<a href="'+akoDocData[:htmlname]+'#'+moduleName+'" >&emsp;&emsp;'+moduleName+'()</a><br />'+nl
+		classes = modules[d][2]["classes"]
+		blocks = modules[d][2]["blocks"]
+		if isString(moduleName) { 
+			moduleComment = formatHTMLComment(modules[d][2]["comment"])
+			moduleId = akoDocData[:name]+'.'+moduleName
+			__sideBarNavigations += '<a href="#'+moduleId+'" >&emsp;'+moduleName+'</a><br />'+nl
+			__mainContent += '<h1 id="'+moduleId+'">'+moduleName+'</h1>
+					<p>'+moduleComment+'</p>'
+		}
 		
-		classes = akoDocData[:classes] #fix index after fix in simple-lang source
-		outClassesLen = lengthOf(classes)
-		for f = 0 to outClassesLen {
-			className = classes[f][1]
-			classComment = classes[f][2]["comment"]
-			__sideBarNavigations += '<a href="'+akoDocData[:htmlname]+'#'+className+'" >&emsp;&emsp;'+className+'()</a><br />'+nl
-			blocks = classes[f][2][:blocks] #fix index after fix in simple-lang source
-			outBlocksLen = lengthOf(blocks)
+		#MODULES BLOCKS
+		outBlocksLen = lengthOf(blocks)
+		if outBlocksLen >= 0 {
 			for e = 0 to outBlocksLen {
 				blockName = blocks[e][1]
-				blockComment = blocks[e][2]["comment"]
-				__sideBarNavigations += '<a href="'+akoDocData[:htmlname]+'#'+blockName+'" >&emsp;&emsp;&emsp;'+blockName+'()</a><br />'+nl
+				blockAbsoluteName = blocks[e][2]["abName"]
+				blockComment = formatHTMLComment(blocks[e][2]["comment"])
+				blockId = akoDocData[:name]+'.'+blockName
+				__sideBarNavigations += '<a href="#'+blockId+'">&emsp;'+blockName+'()</a><br />'+nl
+				__mainContent += '<div id="'+blockId+'" class="ako-block">
+					<a href="#'+blockId+'" class="ako-block-title"> block '+blockAbsoluteName+'</a>
+				<p>'+blockComment+'</p></div>'
+			}
+		}
+		
+		#MODULES CLASSES
+		outClassesLen = lengthOf(classes) #fix index after fix in simple-lang source
+		if outClassesLen >= 0 {
+			for f = 0 to outClassesLen {
+				className = classes[f][1]
+				classAbsoluteName = classes[f][2]["abName"]
+				classComment = formatHTMLComment(classes[f][2]["comment"])
+				classId = moduleName+'.'+className
+				__sideBarNavigations += '<a href="'+akoDocData[:htmlname]+'#'+className+'" >&emsp;'+className+'</a><br />'+nl
+				__mainContent += '<h1 id="'+classId+'">'+classAbsoluteName+'</h1>
+					<p>'+classComment+'</p>'
+				
+				blocks = classes[f][2][:blocks] #fix index after fix in simple-lang source
+				outBlocksLen = lengthOf(blocks)
+				for e = 0 to outBlocksLen {
+					blockName = blocks[e][1]
+					blockAbsoluteName = blocks[e][2]["abName"]
+					blockComment = formatHTMLComment(blocks[e][2]["comment"])
+					blockId = akoDocData[:name]+'.'+blockName
+					__sideBarNavigations += '<a href="#'+blockId+'" >&emsp;'+blockName+'()</a><br />'+nl
+					__mainContent += '<div id="'+blockId+'" class="ako-block">
+						<a href="#'+blockId+'" class="ako-block-title"> block '+blockAbsoluteName+'</a>
+					<p>'+blockComment+'</p></div>'
+				}
 			}
 		}
 		
 	}
+	__mainContent += "<br /><p>"+formatHTMLComment(akoDocData[:suffix])+"</p><br />"
 	
 	content = replaceString(content,"{{title}}",akoDocData[:title])
 	content = replaceString(content,"{{assets-folder}}",getRelativeLink(akoDocData[:htmlpath])+"assets")
 	content = replaceString(content,"{{links-to-current-file}}",__linkToFile)
+	content = replaceString(content,"{{current-file-id-link}}",akoDocData[:title])
 	content = replaceString(content,"{{block-in-current-file-ids}}",__sideBarNavigations)
+	content = replaceString(content,"{{main-contents}}",__mainContent)
+	content = replaceString(content,"{{author}}",akoDocData[:author])
+	content = replaceString(content,"{{date}}",akoDocData[:date])
+	content = replaceString(content,"{{time}}",akoDocData[:time])
+	content = replaceString(content,"{{license}}",akoDocData[:license])
 	
 	htmlFile = new File(akoDestDir+akoDocData[:htmlpath])
 	htmlFile.write(content)

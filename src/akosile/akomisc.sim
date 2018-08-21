@@ -3,6 +3,10 @@ call "simple/utilities/Console.sim"
 
 printVerbose = false
 akoBeSilent = false
+akoDocAuthor = "Akosile Documentor"
+akoDocDate = date()
+akoDocTime = time()
+akoDocLicense = "NONE" #to fetch all from .ako file
 
 akoDestDir = null
 templateName = "default"
@@ -62,3 +66,104 @@ block getRelativeLink(tempLink)
 		}
 	}
 	return ftempLink
+	
+block formatHTMLComment(rawComment)
+	finalHtml = ""
+	TOKEN_DEFAULT = 1 TOKEN_CODE = 2
+	TOKEN_TYPE = TOKEN_DEFAULT
+	rawCommentLen = lengthOf(rawComment)
+	for a = 0 to rawCommentLen {
+		switch TOKEN_TYPE {
+		case TOKEN_DEFAULT
+			if rawComment[a] == "@" {
+				a++
+				if (rawCommentLen - a) > 3 {
+					token = toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3])
+					if token = "code" {
+						a++ a++ a++ a++
+						finalHtml += '<pre class="ako-syntax-code ako-syntax-code-simple">'
+						TOKEN_TYPE = TOKEN_CODE
+						continue
+					else
+						
+					}
+				}
+				if (rawCommentLen - a) > 5 {
+					token = toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3]+rawComment[a+4]+rawComment[a+5])
+					if token = "return" {
+						a++ a++ a++ a++ a++ a++
+						if toLowerCase(rawComment[a]) == "s" { a++ }
+						finalHtml += '<br /><br /><span class="ako-token-raise">Returns: </span></br />&emsp;&emsp;'
+						continue
+					else
+						
+					}
+				}
+				if (rawCommentLen - a) > 7 { 
+					token = toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3]+rawComment[a+4]+rawComment[a+5]+rawComment[a+6]+rawComment[a+7])
+					if token = "datatype" {
+						a++ a++ a++ a++ a++ a++ a++ a++
+						if toLowerCase(rawComment[a]) == "s" { a++ }
+						finalHtml += ' - '
+						continue
+					else
+						
+					}
+				}
+				finalHtml += rawComment[a-1]
+			else 
+				if (rawCommentLen - a) > 3 {
+					if toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]) == "```" {
+						a++ a++ a++ a++
+						finalHtml += '<pre class="ako-syntax-code ako-syntax-code-simple">'
+						TOKEN_TYPE = TOKEN_CODE
+						continue
+					}
+				}
+			}
+			finalHtml += rawComment[a]
+		case TOKEN_CODE 
+			__clen = (rawCommentLen - a)
+			token = "@end__"
+			token1 = "```__"
+			token2 = "@endcode__"
+			if __clen > 3 {
+				token = toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3])
+			}
+			if __clen > 2 {
+				token1 = toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2])
+			}
+			if __clen > 7 {
+				token2 = toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3]+rawComment[a+4]+rawComment[a+5]+rawComment[a+6]+rawComment[a+7])
+			}
+			if token2 == "@endcode" {
+				finalHtml += '</pre><br />'
+				a++ a++ a++ a++ a++ a++ a++ a++
+				TOKEN_TYPE = TOKEN_DEFAULT
+			elif token == "@end"
+				finalHtml += '</pre><br />'
+				a++ a++ a++ a++
+				TOKEN_TYPE = TOKEN_DEFAULT
+			elif token1 == "```" 
+				finalHtml += '</pre><br />'
+				a++ a++ a++ 
+				TOKEN_TYPE = TOKEN_DEFAULT
+			else
+				if isDigit(rawComment[a]) {
+					finalHtml += '<span class="ako-syntax-code-number">'+rawComment[a]+'</span>'
+				elif (rawComment[a] == "#" and rawComment[a+1] != '"') or (rawComment[a] == "/" and rawComment[a+1] == '/' )
+					finalHtml += '<span class="ako-syntax-code-comment">'
+					while rawComment[a+1] != cr and rawComment[a+1] != nl and rawComment[a+1] != crlf {
+						finalHtml += rawComment[a] a++
+					}
+					finalHtml += rawComment[a]+'</span>' 
+				else
+					finalHtml += rawComment[a]
+				}
+				
+			}
+			
+		}
+	}
+	return finalHtml
+
