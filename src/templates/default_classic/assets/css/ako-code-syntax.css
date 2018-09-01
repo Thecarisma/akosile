@@ -1,0 +1,35 @@
+
+
+.ako-syntax-code {
+	background-color:rgb(241,241,241);
+	padding:1%;
+	overflow: auto;
+	margin:20px;
+}
+
+.ako-syntax-code-code-wrap {
+	white-space: pre-wrap;
+}
+
+/* simple-lang */
+
+.ako-syntax-code-simple .ako-syntax-code-reserved-word {
+	color:blue;
+	font-weight:bold;
+}
+
+.ako-syntax-code-simple .ako-syntax-code-number {
+	color:red;
+	font-weight:bold;
+}
+
+.ako-syntax-code-simple .ako-syntax-code-comment {
+	color:green;
+	font-weight:bold;
+	font-style:italic;
+}
+
+.ako-syntax-code-simple .ako-syntax-code-literal {
+	color:orange;
+	font-weight:bold;
+}

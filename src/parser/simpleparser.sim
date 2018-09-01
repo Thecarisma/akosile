@@ -1,4 +1,5 @@
 
+
 block akoParseSimple(sourceFile,type,currentDir)
 	pureName = removeString(sourceFile.name(),type)
 	fsl = removeString(sourceFile.absolutePath(),currentDir)
@@ -122,57 +123,24 @@ block akoParseSimple(sourceFile,type,currentDir)
 				if source[i] == '*' and source[i+1] == '/' and (source[i+2] != '"' or source[i+2] != "'") {
 					TOKEN_TYPE = TOKEN_UNUSED
 				else
-					if currentSourceData["prefix"] == null and (sourceLen - i) > 5 and toLowerCase(source[i-1]+source[i]+source[i+1]+source[i+2]) == "@pre" {
-						i++ i++ i++ i++ i++ i++
-						while (source[i] + source[i+1]) != '*/' {
-							currentSourceData["prefix"] += source[i] i++ 
-						} i++ i++
-					elif currentSourceData["suffix"] == null and (sourceLen - i) > 5 and toLowerCase(source[i-1]+source[i]+source[i+1]+source[i+2]) == "@suf" 
-						i++ i++ i++ i++ i++ i++
-						while (source[i] + source[i+1]) != '*/' {
-							currentSourceData["suffix"] += source[i] i++ 
-						} i++ i++
-					elif (sourceLen - i) > 8 and toLowerCase(source[i]+source[i+2]+source[i+5]) == "atr" 
-						i++ i++ i++ i++ i++ i++ currentSourceData["author"] = ""
-						while source[i] != cr and source[i] != nl and source[i] != crlf {
-							if isAlphaNum(source[i]) or isWhiteSpace(source[i]) or source[i] == "." {
-								currentSourceData["author"] += source[i]
-							}
-							i++
+					if (sourceLen - i) > 5 {
+						token = toLowerCase(source[i]+source[i+1]+source[i+2]+source[i+3])
+						if token == "@pre" {
+							i = absorbTillWhiteSpace(source,i,"@prefix")
+							while (source[i] + source[i+1]) != '*/' {
+								currentSourceData["prefix"] += source[i] i++ 
+							} i-- i--
+						elif token == "@suf"
+							i = absorbTillWhiteSpace(source,i,"@suffix")
+							while (source[i] + source[i+1]) != '*/' {
+								currentSourceData["suffix"] += source[i] i++ 
+							} i-- i--
 						}
-					elif (sourceLen - i) > 8 and toLowerCase(source[i+1]+source[i+2]+source[i+3]) == "ate" 
-						i++ i++ i++ i++ i++ i++ currentSourceData["date"] = ""
-						while source[i] != cr and source[i] != nl and source[i] != crlf {
-							if isAlphaNum(source[i]) or isWhiteSpace(source[i]) {
-								currentSourceData["date"] += source[i]
-							}
-							i++
-						}
-					elif (sourceLen - i) > 8 and toLowerCase(source[i]+source[i+2]+source[i+3]) == "tme" 
-						i++ i++ i++ i++ i++ i++ currentSourceData["time"] = ""
-						while source[i] != cr and source[i] != nl and source[i] != crlf {
-							if isAlphaNum(source[i]) or isWhiteSpace(source[i]) or source[i] == "." or source[i] == ":" {
-								currentSourceData["time"] += source[i]
-							}
-							i++
-						}
-					elif (sourceLen - i) > 8 and toLowerCase(source[i]+source[i+2]+source[i+4]) == "lcn" 
-						i++ i++ i++ i++ i++ i++ i++ currentSourceData["license"] = ""
-						while source[i] != cr and source[i] != nl and source[i] != crlf {
-							if isAlphaNum(source[i]) or isWhiteSpace(source[i]) or source[i] == "." or source[i] == ":" {
-								currentSourceData["license"] += source[i]
-							}
-							i++
-						}
-					else
-						currentComment += source[i]
 					}
-					
+					currentComment += source[i]
 				}
 		}
 	} 
 	add(tempModule["classes"],tempClass) 
 	add(currentSourceData["modules"],tempModule) 
 	allAkoDocData + currentSourceData
-
-

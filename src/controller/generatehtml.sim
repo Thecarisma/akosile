@@ -9,7 +9,7 @@ block generateDocWebsite()
 	} 
 	
 block createHtml(akoDocData)
-	_file = new File("./templates/"+templateName+"/sourcetemplete.html")
+	_file = new File("./templates/"+templateName+"/sourcetemplate.html")
 	content = _file.readFileAsString()
 	
 	__linkToFile = "" 
@@ -19,13 +19,15 @@ block createHtml(akoDocData)
 	for a = 0 to splitedLen - 1 {
 		_____ = ((splitedLen - 1) - a)
 		if _____ >= 2 {
-			__linkToFile += '<a href="'+__copy("../", _____ - 1)+'">'+splited[a]+'</a>'
+			__linkToFile += '<a href="'+__copy("../", _____ - 1)+'"><button _ngcontent-bxo-46="" md-menu-item="" role="menuitem" routerlink="/tutorial" routerlinkactive="active" class="mat-menu-item" tabindex="0" aria-disabled="false"> '+splited[a]+' </button></a>'
 		else
-			__linkToFile += '<a href="'+__copy(".", _____)+'/">'+splited[a]+'</a>'
+			__linkToFile += '<a href="'+__copy(".", _____)+'"><button _ngcontent-bxo-46="" md-menu-item="" role="menuitem" routerlink="/tutorial" routerlinkactive="active" class="mat-menu-item" tabindex="0" aria-disabled="false"> '+splited[a]+' </button></a>'
 		}
 	}
-	__linkToFile += '<a class="active" href="'+akoDocData[:htmlpath]+'">'+akoDocData[:title]+'</a>' 
-	__sideBarNavigations = '<a href="#'+akoDocData[:title]+'" ><span class="ako-sidebar-heading">'+akoDocData[:title]+'</span></a><br />'
+	__linkToFile += '<a href="#"><button _ngcontent-bxo-46="" md-menu-item="" role="menuitem" routerlink="/tutorial" routerlinkactive="active" class="mat-menu-item active" tabindex="0" aria-disabled="false"> '+akoDocData[:title]+' </button></a>  '
+	
+	__sideBarNavigations = '<div _ngcontent-bxo-47=""> <a href="#'+akoDocData[:title]+'"><span _ngcontent-bxo-47="" class="selected-content menu-title pointer"> '+akoDocData[:title]+' </span></a> </div>'
+	
 	#Blocks
 	blocks = akoDocData[:blocks] #fix index after fix in simple-lang source
 	outBlocksLen = lengthOf(blocks)
@@ -34,10 +36,15 @@ block createHtml(akoDocData)
 		blockAbsoluteName = blocks[d][2]["abName"]
 		blockComment = formatHTMLComment(blocks[d][2]["comment"])
 		blockId = akoDocData[:name]+'.'+blockName
-		__sideBarNavigations += '<a href="#'+blockId+'">&emsp;'+blockName+'()</a><br />'+nl
+		__sideBarNavigations += '<div _ngcontent-bxo-47="" class="mt30"> 
+				<span _ngcontent-bxo-47="" class="pointer">  
+				<a href="#'+blockId+'"><span _ngcontent-bxo-47="" class="selected-content"> '+blockName+'()
+				</span></a> </span> </div>' + nl
+				
 		__mainContent += '<div id="'+blockId+'" class="ako-block">
-			<a href="#'+blockId+'" class="ako-block-title"> block '+blockAbsoluteName+'</a>
-		<p>'+blockComment+'</p></div>'
+			<div class="block-quote block-quote-info bg-green-alpha blockquote-padding-left" > 
+				<span style="font-size:20px;font-weight:800px;"> block '+blockAbsoluteName+'</span> </div>
+					<p>'+blockComment+'</p></div>'
 	}
 	
 	#Classes
@@ -48,7 +55,11 @@ block createHtml(akoDocData)
 		classAbsoluteName = classes[d][2]["abName"]
 		classComment = formatHTMLComment(classes[d][2]["comment"])
 		classId = akoDocData[:name]+'.'+className
-		__sideBarNavigations += '<a href="#'+classId+'" >&emsp;'+className+'</a><br />'+nl
+		__sideBarNavigations += '<div _ngcontent-bxo-47="" class="mt30"> 
+				<span _ngcontent-bxo-47="" class="pointer selected-elem">  
+				<a href="#'+classId+'"><span _ngcontent-bxo-47="" class="selected-content"> '+className+'
+				</span></a> </span> </div>' + nl
+		
 		__mainContent += '<h1 id="'+classId+'">'+classAbsoluteName+'</h1>
 				<p>'+classComment+'</p>'
 			
@@ -59,10 +70,15 @@ block createHtml(akoDocData)
 			blockAbsoluteName = blocks[e][2]["abName"]
 			blockComment = formatHTMLComment(blocks[e][2]["comment"])
 			blockId = akoDocData[:name]+'.'+blockName
-			__sideBarNavigations += '<a href="#'+blockId+'" >&emsp;'+blockName+'()</a><br />'+nl
+			__sideBarNavigations += '<div _ngcontent-bxo-47="" class="mt30"> 
+				<span _ngcontent-bxo-47="" class="pointer">  
+				<a href="#'+blockId+'"><span _ngcontent-bxo-47="" class="selected-content"> '+blockName+'()
+				</span></a> </span> </div>' + nl
+				
 			__mainContent += '<div id="'+blockId+'" class="ako-block">
-				<a href="#'+blockId+'" class="ako-block-title"> block '+blockAbsoluteName+'</a>
-			<p>'+blockComment+'</p></div>'
+				<div class="block-quote block-quote-info bg-green-alpha blockquote-padding-left" > 
+					<span style="font-size:20px;font-weight:800px;"> block '+blockAbsoluteName+'</span> </div>
+						<p>'+blockComment+'</p></div>'
 		}
 	}
 	
@@ -76,7 +92,9 @@ block createHtml(akoDocData)
 		if isString(moduleName) { 
 			moduleComment = formatHTMLComment(modules[d][2]["comment"])
 			moduleId = akoDocData[:name]+'.'+moduleName
-			__sideBarNavigations += '<a href="#'+moduleId+'" >&emsp;'+moduleName+'</a><br />'+nl
+			__sideBarNavigations += '<div _ngcontent-bxo-47=""><span _ngcontent-bxo-47="" class="back-button-hidden"></span> </div>
+			<div _ngcontent-bxo-47=""> <a href="#'+moduleId+'"><span _ngcontent-bxo-47="" class="selected-content menu-title pointer"> '+moduleName+' </span></a> </div>'
+				
 			__mainContent += '<h1 id="'+moduleId+'">'+moduleName+'</h1>
 					<p>'+moduleComment+'</p>'
 		}
@@ -89,10 +107,15 @@ block createHtml(akoDocData)
 				blockAbsoluteName = blocks[e][2]["abName"]
 				blockComment = formatHTMLComment(blocks[e][2]["comment"])
 				blockId = akoDocData[:name]+'.'+blockName
-				__sideBarNavigations += '<a href="#'+blockId+'">&emsp;'+blockName+'()</a><br />'+nl
+				__sideBarNavigations += '<div _ngcontent-bxo-47="" class="mt30"> 
+					<span _ngcontent-bxo-47="" class="pointer">  
+						<a href="#'+blockId+'"><span _ngcontent-bxo-47="" class="selected-content"> '+blockName+'()
+							</span></a> </span> </div>' + nl
+				
 				__mainContent += '<div id="'+blockId+'" class="ako-block">
-					<a href="#'+blockId+'" class="ako-block-title"> block '+blockAbsoluteName+'</a>
-				<p>'+blockComment+'</p></div>'
+					<div class="block-quote block-quote-info bg-green-alpha blockquote-padding-left" > 
+						<span style="font-size:20px;font-weight:800px;"> block '+blockAbsoluteName+'</span> </div>
+							<p>'+blockComment+'</p></div>'
 			}
 		}
 		
@@ -104,7 +127,11 @@ block createHtml(akoDocData)
 				classAbsoluteName = classes[f][2]["abName"]
 				classComment = formatHTMLComment(classes[f][2]["comment"])
 				classId = moduleName+'.'+className
-				__sideBarNavigations += '<a href="'+akoDocData[:htmlname]+'#'+className+'" >&emsp;'+className+'</a><br />'+nl
+				__sideBarNavigations += '<div _ngcontent-bxo-47="" class="mt30"> 
+					<span _ngcontent-bxo-47="" class="pointer selected-elem">  
+						<a href="#'+classId+'"><span _ngcontent-bxo-47="" class="selected-content"> '+className+'
+						</span></a> </span> </div>' + nl
+				
 				__mainContent += '<h1 id="'+classId+'">'+classAbsoluteName+'</h1>
 					<p>'+classComment+'</p>'
 				
@@ -115,10 +142,15 @@ block createHtml(akoDocData)
 					blockAbsoluteName = blocks[e][2]["abName"]
 					blockComment = formatHTMLComment(blocks[e][2]["comment"])
 					blockId = akoDocData[:name]+'.'+blockName
-					__sideBarNavigations += '<a href="#'+blockId+'" >&emsp;'+blockName+'()</a><br />'+nl
+					__sideBarNavigations += '<div _ngcontent-bxo-47="" class="mt30"> 
+						<span _ngcontent-bxo-47="" class="pointer">  
+							<a href="#'+blockId+'"><span _ngcontent-bxo-47="" class="selected-content"> '+blockName+'()
+								</span></a> </span> </div>' + nl
+								
 					__mainContent += '<div id="'+blockId+'" class="ako-block">
-						<a href="#'+blockId+'" class="ako-block-title"> block '+blockAbsoluteName+'</a>
-					<p>'+blockComment+'</p></div>'
+						<div class="block-quote block-quote-info bg-green-alpha blockquote-padding-left" > 
+							<span style="font-size:20px;font-weight:800px;"> block '+blockAbsoluteName+'</span> </div>
+								<p>'+blockComment+'</p></div>'
 				}
 			}
 		}

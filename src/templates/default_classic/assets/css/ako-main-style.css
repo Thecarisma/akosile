@@ -1,0 +1,132 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:1.1vw;
+}
+
+p {
+	line-height: 3vh;
+}
+
+.ako-topnav {
+  overflow: hidden;
+  background-color: white;
+  padding:1%;
+  top:0px;
+  border-bottom: 2px solid #ebeef4;
+	position:fixed;
+	width:100%;
+}
+
+.ako-topnav a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 1.3vw;
+  vertical-align: middle;
+  margin-left:2px;
+  background-color: rgb(241,241,241);
+}
+
+.ako-topnav .header-logo {
+  display:currently failing;
+}
+
+.ako-topnav a:hover {
+  background-color: #c4deed;
+  color: black;
+}
+
+.ako-topnav a.active {
+  background-color: #7f8796;
+  color: white;
+}
+
+/* Main Content */
+
+.ako-main-container {
+	margin:1%;
+	overflow: auto;
+}
+
+.ako-main-content {
+	margin-left:22%;
+	margin-top:80px;
+	overflow: auto;
+	height:86.5vh;
+}
+
+/* Main Side bar */
+
+.ako-main-sidebar {
+	display:block;
+	width:20%;
+	display: block;
+	float:left;
+	margin-left:1%;
+	height:85vh;
+	position:fixed;
+	overflow:auto;
+	padding:5px;
+	background-color:rgb(241,241,241);
+}
+
+#ako-sidebar {
+	margin-bottom:100px;
+}
+
+.ako-main-sidebar .ako-sidebar-button {
+	height:100% !important;
+	width:10px;
+	float:right;
+	border:0px;
+	background-color:#c4deed;
+}
+
+.ako-main-sidebar .ako-sidebar-button:hover {
+	background-color:#2673a0;
+}
+
+.ako-main-sidebar a {
+	text-decoration: none !important;
+	float:left;
+	color:#7f8796;
+}
+
+.ako-sidebar-heading {
+	text-decoration: none !important;
+	font-weight:bold;
+	float:left;
+}
+
+/**/
+.ako-block-title {
+	background-color:#7f8796;
+	width:97.5% !important;
+	padding:10px;
+	margin-top:5px;
+	margin-bottom:5px;
+	border-radius:5%;
+	margin-right:1%;
+	display: block;
+	font-weight:bold;
+	color:white;
+	font-size:1.5vw;
+	text-decoration:none;
+}
+
+.ako-token-raise {
+	color:#7f8796;
+	font-weight:bold;	
+}
+
+/* Footer */
+.ako-footer {
+	background-color:rgb(241,241,241);
+	color:#7f8796;
+	height:20%;
+	padding:2%;
+	margin-top:5%;
+}

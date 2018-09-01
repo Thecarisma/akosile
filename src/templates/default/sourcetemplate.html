@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{title}}</title>
+	<link href="{{assets-folder}}/css/ako-main-style.css" rel="stylesheet">
+	<link href="{{assets-folder}}/css/ako-custom-style.css" rel="stylesheet">
+</head>
+<body>
+<app-root ng-version="2.4.10" _nghost-bxo-46="">
+	<!-- HEADER BEGIN -->
+	<md-toolbar _ngcontent-bxo-46="" class="custom-toolbar mat-toolbar" role="toolbar">
+		<div class="mat-toolbar-layout"><md-toolbar-row class="mat-toolbar-row">
+			<span _ngcontent-bxo-46="">
+				<a _ngcontent-bxo-46="" href="./index.html">
+					<img _ngcontent-bxo-46="" class="logo" src="{{assets-folder}}/images/favicon.ico">
+				</a>
+			</span>
+			<span style="margin-left:20px;"></span> 
+			{{links-to-current-file}}
+			
+			<span _ngcontent-bxo-46="" class="spacer"></span>
+			
+			<button _ngcontent-bxo-46="" md-menu-item="" role="menuitem" routerlink="/guide" routerlinkactive="active" class="mat-menu-item active" tabindex="0" aria-disabled="false">Modules </button>
+			<button _ngcontent-bxo-46="" md-menu-item="" role="menuitem" routerlink="/tutorial" routerlinkactive="active" class="mat-menu-item" tabindex="0" aria-disabled="false"> Tutorial </button>
+		</md-toolbar-row>
+		</div>
+	</md-toolbar>
+	<!-- END HEADER -->
+	
+	<!-- MAIN CONTAINER -->
+	<!-- SIDEBAR BEGIN -->
+	<md-sidenav-container _ngcontent-bxo-47="" class="container mat-sidenav-container mat-sidenav-transition">
+	<md-sidenav _ngcontent-bxo-47="" mode="side" opened="true" tabindex="-1" class="mat-sidenav mat-sidenav-opened mat-sidenav-side" style="margin-bottom:100px;">
+	<cdk-focus-trap class="mat-sidenav-focus-trap">
+	<div class="cdk-focus-trap-content">
+			<div _ngcontent-bxo-47=""><span _ngcontent-bxo-47="" class="back-button-hidden"></span> </div>
+			{{block-in-current-file-ids}}
+			<span _ngcontent-bxo-47="" class="back-button-hidden"></span>
+	</div>
+	</cdk-focus-trap>
+	</md-sidenav>
+		
+		
+		<div cdk-scrollable="" class="mat-sidenav-content" style="margin-left: 281px; margin-right: 0px; transform: translate3d(0px, 0px, 0px);">
+		<md-card style="box-shadow:none" class="mat-card">
+		<md-card-content class="mat-card-content">
+				
+		<div id="content">{{main-contents}}</div>
+		
+
+		</md-card-content>
+		</md-card>
+	</div>
+	</md-sidenav-container>
+</app-root>
+<script type="text/javascript" src="{{assets-folder}}/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="{{assets-folder}}/js/showdown.min.js"></script>
+<script type="text/javascript" src="{{assets-folder}}/js/ako-main-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{title}}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="{{assets-folder}}/css/ako-main-style.css">
+	<link rel="stylesheet" href="{{assets-folder}}/css/ako-code-syntax.css">
+</head>
+<body>
+	<!-- Header -->
+	<div class="ako-topnav">
+		<!--<a href="#home" style="background-color:white;"><img class="header-logo" src="{{assets-folder}}/images/default-logo.jpg" /></a>-->
+		{{links-to-current-file}}
+	</div>
+	<!-- End Header -->
+	
+	
+	<!-- SideBar -->
+	<div class="ako-main-sidebar" id="main-ako-sidebar">
+		<!--<button class="ako-sidebar-button" id="ako-sidebar-button" onclick="akoOpenCloseSidebar()"></button> -->
+		<div id="ako-sidebar">
+			{{block-in-current-file-ids}}
+		</div>
+	</div>
+	<!-- End SideBar -->
+
+	<!-- content -->
+	<div class="ako-main-content" id="ako-main-content">
+		<div id="{{current-file-id-link}}">
+			{{main-contents}}
+			<div class="ako-footer">
+				<p> Author : {{author}} &emsp;&emsp;Date : {{date}} &emsp;&emsp;Time : {{time}}
+				<br /><br />License : {{license}} </p>
+			</div>
+		</div>
+	</div>
+	<script src="{{assets-folder}}/js/ako-main-script.js"></script>
+
+</body>
+</html>
