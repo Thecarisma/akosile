@@ -122,6 +122,10 @@ block akoParseSimple(sourceFile,type,currentDir)
 			case TOKEN_MULTILINE_COMMENT
 				if source[i] == '*' and source[i+1] == '/' and (source[i+2] != '"' or source[i+2] != "'") {
 					TOKEN_TYPE = TOKEN_UNUSED
+				elif source[i] == cr or source[i] == nl or source[i] == crlf
+					while isWhiteSpace(source[i]+source[i+1]) {
+						i++
+					} currentComment += nl
 				else
 					if (sourceLen - i) > 5 {
 						token = toLowerCase(source[i]+source[i+1]+source[i+2]+source[i+3])
@@ -137,7 +141,7 @@ block akoParseSimple(sourceFile,type,currentDir)
 							} i-- i--
 						}
 					}
-					currentComment += source[i]
+					currentComment += source[i] 
 				}
 		}
 	} 
