@@ -8,6 +8,19 @@ block akoParseSimple(sourceFile,type,currentDir)
 	currentSourceData = []
 	dateTime = new DateTime(null)
 	
+	vmb = variableMap["Block"]
+	if isList(vmb) and lengthOf(vmb) < 0 {
+		variableMap["Block"] = []
+	}
+	vmb = variableMap["Class"]
+	if isList(vmb) and lengthOf(vmb) < 0 {
+		variableMap["Class"] = []
+	}
+	vmb = variableMap["Module"]
+	if isList(vmb) and lengthOf(vmb) < 0 {
+		variableMap["Module"] = []
+	}
+	
 	currentSourceData["modules"] = []
 	currentSourceData["blocks"] = []
 	currentSourceData["classes"] = []
@@ -34,6 +47,7 @@ block akoParseSimple(sourceFile,type,currentDir)
 	currentModuleValue = null
 	currentClassName = null
 	currentComment = ""
+	lineNumber = 0
 
 	source = sourceFile.readFileAsString()	+ " "
 	TOKEN_UNUSED =  0 TOKEN_MULTILINE_COMMENT = 1 
@@ -43,11 +57,14 @@ block akoParseSimple(sourceFile,type,currentDir)
 		if i == sourceLen {  break }
 		switch TOKEN_TYPE {
 			case TOKEN_UNUSED 
+				if source[i] = cr or source[i] = nl or source[i] = crlf { lineNumber++ }
 				if source[i] == '/' and source[i+1] == '*' i++ currentComment = "" TOKEN_TYPE = TOKEN_MULTILINE_COMMENT
 				elif source[i] == "#" and source[i+1] != '"'
 					while source[i+1] != cr and source[i+1] != nl and source[i+1] != crlf {
 						i++
-					}
+					} lineNumber++
+				elif source[i] == '"' i++ while source[i] != '"' { i++ } 
+				elif source[i] == "'" i++ while source[i] != "'" { i++ } 
 				else
 					if (sourceLen - i) > 5 {
 						if (source[i]+source[i+1]+source[i+2]+source[i+3]+source[i+4]+source[i+5]) == "module" and isWhiteSpace(source[i+6]) {
@@ -58,8 +75,10 @@ block akoParseSimple(sourceFile,type,currentDir)
 								moduleName += source[i] i++
 							} 
 							tempModule["comment"] = currentComment currentComment = ""
+							tempModule["id"] = moduleName
 							currentModuleValue = moduleName
 							currentSourceData["modules"][currentModuleValue] = tempModule
+							variableMap["Module"][moduleName] = "./"+currentSourceData["htmlpath"]+"#"+tempModule["id"]
 							if !hasModule { hasModule = true } hasClass = false 
 						} 
 					}
@@ -76,15 +95,18 @@ block akoParseSimple(sourceFile,type,currentDir)
 							while source[i] != cr and source[i] != nl and source[i] != crlf and i <= sourceLen {
 								abClassName += source[i] 
 								i++
-							}
+							} lineNumber++
 							tempClass["comment"] = currentComment currentComment = ""
 							tempClass["abName"] = abClassName
 							currentClassName = className
 							if hasModule {
+								tempClass["id"] = currentModuleValue+"."+className
 								currentSourceData["modules"][currentModuleValue]["classes"][currentClassName] = tempClass
 							else
+								tempClass["id"] = className
 								currentSourceData["classes"][currentClassName] = tempClass
 							}
+							variableMap["Class"][className] = "./"+currentSourceData["htmlpath"]+"#"+tempClass["id"]
 							if !hasClass { hasClass = true }
 						elif (source[i]+source[i+1]+source[i+2]+source[i+3]+source[i+4]) == "block" and isWhiteSpace(source[i+5])
 							blockName = "" abBlockName = ""
@@ -106,15 +128,20 @@ block akoParseSimple(sourceFile,type,currentDir)
 							tempBlock["abName"] = abBlockName
 							if hasModule {
 								if hasClass {
+									tempBlock["id"] = currentModuleValue+"."+currentClassName+"."+blockName
 									currentSourceData["modules"][currentModuleValue]["classes"][currentClassName]["blocks"][blockName] = tempBlock 
 								else
+									tempBlock["id"] = currentModuleValue+"."+blockName
 									currentSourceData["modules"][currentModuleValue]["blocks"][blockName] = tempBlock
 								}
 							elif hasClass
+								tempBlock["id"] = currentClassName+"."+blockName
 								currentSourceData["classes"][currentClassName]["blocks"][blockName] = tempBlock 
 							else
+								tempBlock["id"] = blockName
 								currentSourceData["blocks"][blockName] = tempBlock
 							}
+							variableMap["Block"][abBlockName] = "./"+currentSourceData["htmlpath"]+"#"+tempBlock["id"]
 							tempBlock = []
 						}
 					}
@@ -125,10 +152,30 @@ block akoParseSimple(sourceFile,type,currentDir)
 				elif source[i] == cr or source[i] == nl or source[i] == crlf
 					while isWhiteSpace(source[i]+source[i+1]) {
 						i++
-					} currentComment += nl
+					} currentComment += nl lineNumber++
 				else
 					if (sourceLen - i) > 5 {
-						token = toLowerCase(source[i]+source[i+1]+source[i+2]+source[i+3])
+						varToken = toLowerCase(source[i]+source[i+1])
+						token = toLowerCase(varToken+source[i+2]+source[i+3])
+						if varToken == "$$" {
+							i = absorbTillWhiteSpace(source,i,"$$")
+							var = ""
+							while !isWhiteSpace(source[i]) {
+								var += source[i] i++
+							}
+							vv = variableMap[var]
+							if vv == null {
+								printAkoMessage("the variable '"+var+"' is not define at line "+lineNumber+" in "+sourceFile.getName(),DISPLAY_TYPE_WARNING)
+								currentComment += "$$"+var
+							else
+								if stringStartsWith(vv,"http") or stringStartsWith(vv,"./") or stringStartsWith(vv,"../") or stringStartsWith(vv,"#") {
+									currentComment += '<a href="'+vv+'">'+var+'</a>'
+								else 
+									currentComment += vv
+								}
+							}
+							
+						}
 						if token == "@pre" {
 							i = absorbTillWhiteSpace(source,i,"@prefix")
 							while (source[i] + source[i+1]) != '*/' {
