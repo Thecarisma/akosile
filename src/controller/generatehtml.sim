@@ -4,13 +4,15 @@
 block generateDocWebsite()
 	copyAssetFolder()
 	docDateLen = lengthOf(allAkoDocData)
+	printAkoMessage("generating documentation website at "+akoDestDir,DISPLAY_TYPE_INFO)
 	for a = 1 to docDateLen {
 		createHtml(allAkoDocData[a])
 	} 
 	
 block createHtml(akoDocData)
-	_file = new File("./templates/"+templateName+"/sourcetemplate.html")
+	_file = new File(templateFolder+templateName+"/sourcetemplate.html")
 	content = _file.readFileAsString()
+	printAkoMessage("generating webpage at : "+akoDocData[:htmlpath],DISPLAY_TYPE_MESSAGE)
 	
 	__linkToFile = "" 
 	__mainContent = "<p>"+formatHTMLComment(akoDocData[:prefix],getRelativeLink(akoDocData[:htmlpath]))+"</p><br />"
@@ -190,7 +192,7 @@ block createHtml(akoDocData)
 	htmlFile.write(content)
 	
 block copyAssetFolder()
-	dir = new Directory("./templates/"+templateName+"/assets/")
+	dir = new Directory(templateFolder+templateName+"/assets/")
 	if dir.exists() {
 		#dir.copyTo(akoDestDir) #to copy to main dest dir
 	else

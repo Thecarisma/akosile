@@ -4,7 +4,8 @@ call "./akosile/preparedir.sim"
 call "simple/io/Directory.sim"
 
 block main()
-	dir = null
+	dir = null 
+	p = new Directory("./templates/") templateFolder = p.absolutePath()
 	cmdparamsLen = lengthOf(cmdparams)
 	for a = 0 to cmdparamsLen {
 		switch cmdparams[a] {
@@ -26,12 +27,15 @@ block main()
 			case "--directory" dir = cmdparams[a++]
 			case "-d" dir = cmdparams[a++]
 			case "--d" dir = cmdparams[a++]
+			case "--map" akoMapFile = cmdparams[a++]
+			case "-m" akoMapFile = cmdparams[a++]
+			case "--m" akoMapFile = cmdparams[a++]
 			default
-				path = new Directory(cmdparams[a])
-				if path.isADirectory() {
-					dir = cmdparams[a] 
-					continue
-				}
+				# path = new Directory(cmdparams[a])
+				# if path.isADirectory() {
+					# dir = cmdparams[a] 
+					# continue
+				# } 
 		}
 	}
 	prepareDirectory(dir)

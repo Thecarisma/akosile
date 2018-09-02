@@ -9,6 +9,8 @@ akoDocTime = time()
 akoDocLicense = "NONE" #to fetch all from .ako file
 
 akoDestDir = null
+akoMapFile = null
+templateFolder = null
 templateName = "default"
 
 variableMap = []
@@ -23,7 +25,7 @@ allAkoDocData = [
 ]
 
 DISPLAY_TYPE_WARNING = 2
-DISPLAY_TYPE_VERBOSE = 1
+DISPLAY_TYPE_INFO = 1
 DISPLAY_TYPE_MESSAGE = 0
 
 
@@ -36,7 +38,7 @@ block printAkoMessage(message,type)
 			printWithFG(ConsoleColor.DARKMAGENTA(), "akosile.message	: ") @message
 		}
 		
-	elif type == DISPLAY_TYPE_VERBOSE
+	elif type == DISPLAY_TYPE_INFO
 		printWithFG(ConsoleColor.DARKCYAN(), "akosile.info	: ") @message
 	}
 	

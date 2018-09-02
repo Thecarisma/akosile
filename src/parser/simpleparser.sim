@@ -1,6 +1,7 @@
 
 
 block akoParseSimple(sourceFile,type,currentDir)
+	printAkoMessage("parsing : "+removeString(sourceFile.absolutePath(),currentDir),DISPLAY_TYPE_MESSAGE)
 	pureName = removeString(sourceFile.name(),type)
 	fsl = removeString(sourceFile.absolutePath(),currentDir)
 	fileSourceLink =  removeString(fsl,type)+".html" #allAkoDocLinks["currentDir"]+
