@@ -1,15 +1,130 @@
 
 
+akoIndexexList = []
+
 
 block generateDocWebsite()
 	copyAssetFolder()
 	docDateLen = lengthOf(allAkoDocData)
 	printAkoMessage("generating documentation website at "+akoDestDir,DISPLAY_TYPE_INFO)
 	for a = 1 to docDateLen {
+		if lengthOf(akoIndexexList[allAkoDocData[a][:htmlparentpath]]) < 0 {
+			akoIndexexList[allAkoDocData[a][:htmlparentpath]] = []
+			akoIndexexList[allAkoDocData[a][:htmlparentpath]]["modules"] = []
+			akoIndexexList[allAkoDocData[a][:htmlparentpath]]["classes"] = []
+			akoIndexexList[allAkoDocData[a][:htmlparentpath]]["blocks"] = []
+			akoIndexexList[allAkoDocData[a][:htmlparentpath]]["files"] = []
+		}
 		createHtml(allAkoDocData[a])
-	} 
+	}
+	if generateIndexes {
+		printAkoMessage("generating documentation index webpages... ",DISPLAY_TYPE_INFO)
+		printAkoMessage("index generation can take some time to analyse and complete",DISPLAY_TYPE_WARNING)
+		generateIndexPage(akoDestDir)
+	else
+		printAkoMessage("index webpages generation disable for this documentation ",DISPLAY_TYPE_MESSAGE)
+	}
+	
+	
+block generateIndexPage(directory)
+	akoDestDir = replaceString(akoDestDir,'\','/')
+	akilLen = lengthOf(akoIndexexList)
+	for a = 0 to akilLen {
+		printAkoMessage("generating doc summary webpage for : ./"+removeString(akoIndexexList[a][1],akoDestDir),DISPLAY_TYPE_INFO)
+		_file = new File(templateFolder+templateName+"/docsummarytemplate.html")
+		content = _file.readFileAsString()
+		htmlpath = akoIndexexList[a][1]+"index.html"
+		if __exists(htmlpath) {
+			if indexAsSummary {
+				printAkoMessage("deleting index.html to be replace by docsummary for ./"+removeString(akoIndexexList[a][1],akoDestDir),DISPLAY_TYPE_WARNING)
+				__delete(htmlpath)
+			else
+				htmlpath = akoIndexexList[a][1]+"docsummary.html"
+			}
+		}
+		htmlFile = new File(htmlpath) dir = new Directory(htmlFile.directory())
+		
+		__linkToFile = '<a href="#"><button class="mat-menu-item active" tabindex="0" aria-disabled="false"> '+dir.name()+' </button></a>  ' 
+		
+		#modules
+		__modules = '<div class="block-quote block-quote-info bg-green-alpha" id="Modules"> <h2 > Modules </h2> </div><table>'
+		indexModules = akoIndexexList[a][2][:modules]
+		modLen = lengthOf(indexModules)
+		if modLen < 0 { __modules = "" }
+		for b = 0 to modLen {
+			name = indexModules[b][1]
+			link = lastStringAfterChar(indexModules[b][2],'/')
+			comment = ""
+			__modules += '<tr> <td><a href="'+link+'" class="index-link">&emsp;&emsp; '+name+' &nbsp;&nbsp;</a></td> <td>'+comment+'</td> </tr> '
+		}
+		__modules += '</table>'
+		
+		#classes
+		__classes = '<div class="block-quote block-quote-info bg-green-alpha" id="Modules"> <h2 > Classes </h2> </div><table>'
+		indexClasses = akoIndexexList[a][2][:classes] 
+		claLen = lengthOf(indexClasses)
+		if claLen < 0 { __classes = "" }
+		for b = 0 to claLen {
+			name = indexClasses[b][1]
+			link = lastStringAfterChar(indexClasses[b][2],'/')
+			comment = ""
+			__classes += '<tr> <td><a href="'+link+'" class="index-link">&emsp;&emsp; '+name+' &nbsp;&nbsp;</a></td> <td>'+comment+'</td> </tr> '
+		}
+		__classes += '</table>'
+		
+		#blocks
+		__blocks = '<div class="block-quote block-quote-info bg-green-alpha" id="Modules"> <h2 > Blocks </h2>  </div>'
+		indexBlocks = akoIndexexList[a][2][:blocks] 
+		bloLen = lengthOf(indexBlocks)
+		if bloLen < 0 { __blocks = "" }
+		for b = 0 to bloLen {
+			name = indexBlocks[b][1]
+			link = lastStringAfterChar(indexBlocks[b][2],'/')
+			__blocks += '<a href="'+link+'" class="index-link">&emsp;&emsp; '+name+' &nbsp;&nbsp;</a><br />'
+		}
+		
+		#files
+		__files = '<div class="block-quote block-quote-info bg-green-alpha" id="Modules"> <h2 > Files </h2> </div>'
+		indexFiles = akoIndexexList[a][2][:files] 
+		filLen = lengthOf(indexFiles)
+		if filLen < 0 { __files = "" }
+		for b = 0 to filLen {
+			name = indexFiles[b][1]
+			link = lastStringAfterChar(indexFiles[b][2],'/')
+			__files += '<a href="'+link+'" class="index-link">&emsp;&emsp; '+name+' &nbsp;&nbsp;</a><br />'
+		}
+		
+		secMenu = variableMap["SecondaryMenu"]
+		__secondaryMenu = ""
+		if isList(secMenu) {
+			splited = splitString(htmlpath,'/')
+			splitedLen = lengthOf(splited)
+			secMenuLen = lengthOf(secMenu)
+			for i = 0 to secMenuLen {
+				__menu = secMenu[i] 
+				if splitedLen > 1 {
+					tu = __copy(".", ((splitedLen - 1) - 0))+"/../"
+				else 
+					tu = __copy(".", ((splitedLen - 0) - 0))+"/"
+				}
+				url = replaceString(__menu[1],"doc-index",tu)
+				__secondaryMenu += '<a href="'+url+'"><button class="mat-menu-item" tabindex="0" aria-disabled="false"> '+__menu[0]+' </button></a>'
+			}
+		}
+		
+		content = replaceString(content,"{{modules-list}}",__modules)
+		content = replaceString(content,"{{classes-list}}",__classes)
+		content = replaceString(content,"{{blocks-list}}",__blocks)
+		content = replaceString(content,"{{files-list}}",__files)
+		content = replaceString(content,"{{secondary-menu}}",__secondaryMenu) 
+		content = replaceString(content,"{{assets-folder}}",getRelativeLink(removeString(htmlpath,akoDestDir))+"assets")
+		content = replaceString(content,"{{title}}","index of "+dir.name()+" - "+mainTitle)
+	content = replaceString(content,"{{links-to-current-file}}",__linkToFile)
+		htmlFile.write(content)
+	}
 	
 block createHtml(akoDocData)
+	akoIndexexList[akoDocData[:htmlparentpath]]["files"][akoDocData[:name]] = akoDocData[:htmlpath]
 	_file = new File(templateFolder+templateName+"/sourcetemplate.html")
 	content = _file.readFileAsString()
 	printAkoMessage("generating webpage at : "+akoDocData[:htmlpath],DISPLAY_TYPE_MESSAGE)
@@ -47,6 +162,8 @@ block createHtml(akoDocData)
 			<div class="block-quote block-quote-info bg-green-alpha blockquote-padding-left" > 
 				<span style="font-size:20px;font-weight:800px;"> block '+blockAbsoluteName+'</span> </div>
 					<p>'+blockComment+'</p></div>'
+					
+		akoIndexexList[akoDocData[:htmlparentpath]]["blocks"][blockAbsoluteName] = akoDocData[:htmlpath]+"#"+blockId
 	}
 	
 	#Classes
@@ -64,6 +181,8 @@ block createHtml(akoDocData)
 		
 		__mainContent += '<h1 id="'+classId+'">'+classAbsoluteName+'</h1>
 				<p>'+classComment+'</p>'
+				
+		akoIndexexList[akoDocData[:htmlparentpath]]["classes"][classAbsoluteName] = akoDocData[:htmlpath]+"#"+classId
 			
 		blocks = classes[d][2][:blocks] #fix index after fix in simple-lang source
 		outBlocksLen = lengthOf(blocks)
@@ -81,6 +200,8 @@ block createHtml(akoDocData)
 				<div class="block-quote block-quote-info bg-green-alpha blockquote-padding-left" > 
 					<span style="font-size:20px;font-weight:800px;"> block '+blockAbsoluteName+'</span> </div>
 						<p>'+blockComment+'</p></div>'
+						
+			akoIndexexList[akoDocData[:htmlparentpath]]["blocks"][blockAbsoluteName] = akoDocData[:htmlpath]+"#"+blockId
 		}
 	}
 	
@@ -99,6 +220,8 @@ block createHtml(akoDocData)
 				
 			__mainContent += '<h1 id="'+moduleId+'">'+moduleName+'</h1>
 					<p>'+moduleComment+'</p>'
+					
+			akoIndexexList[akoDocData[:htmlparentpath]]["modules"][moduleName] = akoDocData[:htmlpath]+"#"+moduleId
 		}
 		
 		#MODULES BLOCKS
@@ -118,6 +241,8 @@ block createHtml(akoDocData)
 					<div class="block-quote block-quote-info bg-green-alpha blockquote-padding-left" > 
 						<span style="font-size:20px;font-weight:800px;"> block '+blockAbsoluteName+'</span> </div>
 							<p>'+blockComment+'</p></div>'
+							
+				akoIndexexList[akoDocData[:htmlparentpath]]["blocks"][blockAbsoluteName] = akoDocData[:htmlpath]+"#"+blockId
 			}
 		}
 		
@@ -136,6 +261,8 @@ block createHtml(akoDocData)
 				
 				__mainContent += '<h1 id="'+classId+'">'+classAbsoluteName+'</h1>
 					<p>'+classComment+'</p>'
+					
+				akoIndexexList[akoDocData[:htmlparentpath]]["classes"][classAbsoluteName] = akoDocData[:htmlpath]+"#"+classId
 				
 				blocks = classes[f][2][:blocks] #fix index after fix in simple-lang source
 				outBlocksLen = lengthOf(blocks)
@@ -153,6 +280,8 @@ block createHtml(akoDocData)
 						<div class="block-quote block-quote-info bg-green-alpha blockquote-padding-left" > 
 							<span style="font-size:20px;font-weight:800px;"> block '+blockAbsoluteName+'</span> </div>
 								<p>'+blockComment+'</p></div>'
+								
+					akoIndexexList[akoDocData[:htmlparentpath]]["blocks"][blockAbsoluteName] = akoDocData[:htmlpath]+"#"+blockId
 				}
 			}
 		}
@@ -176,10 +305,9 @@ block createHtml(akoDocData)
 		}
 	}
 	#
-	content = replaceString(content,"{{title}}",akoDocData[:title])
+	content = replaceString(content,"{{title}}",akoDocData[:title]+" - "+mainTitle)
 	content = replaceString(content,"{{assets-folder}}",getRelativeLink(akoDocData[:htmlpath])+"assets")
 	content = replaceString(content,"{{links-to-current-file}}",__linkToFile)
-	content = replaceString(content,"{{secondary-menu}}",__secondaryMenu)
 	content = replaceString(content,"{{current-file-id-link}}",akoDocData[:title])
 	content = replaceString(content,"{{block-in-current-file-ids}}",__sideBarNavigations)
 	content = replaceString(content,"{{main-contents}}",__mainContent)
@@ -187,6 +315,7 @@ block createHtml(akoDocData)
 	content = replaceString(content,"{{date}}",akoDocData[:date])
 	content = replaceString(content,"{{time}}",akoDocData[:time])
 	content = replaceString(content,"{{license}}",akoDocData[:license])
+	content = replaceString(content,"{{secondary-menu}}",__secondaryMenu)
 	
 	htmlFile = new File(akoDestDir+akoDocData[:htmlpath])
 	htmlFile.write(content)

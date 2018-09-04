@@ -4,7 +4,8 @@ block akoParseSimple(sourceFile,type,currentDir)
 	printAkoMessage("parsing : "+removeString(sourceFile.absolutePath(),currentDir),DISPLAY_TYPE_MESSAGE)
 	pureName = removeString(sourceFile.name(),type)
 	fsl = removeString(sourceFile.absolutePath(),currentDir)
-	fileSourceLink =  removeString(fsl,type)+".html" #allAkoDocLinks["currentDir"]+
+	fileSourceLink =  removeString(fsl,type)+".html" 
+	fileSourceParentLink =  akoDestDir+removeString(fsl,sourceFile.name())
 	allAkoDocLinks[pureName] = fileSourceLink
 	currentSourceData = []
 	dateTime = new DateTime(null)
@@ -25,7 +26,8 @@ block akoParseSimple(sourceFile,type,currentDir)
 	currentSourceData["modules"] = []
 	currentSourceData["blocks"] = []
 	currentSourceData["classes"] = []
-	currentSourceData["htmlpath"] = replaceString(fileSourceLink,'\','/')
+	currentSourceData["htmlpath"] = replaceString(fileSourceLink,'\','/') 
+	currentSourceData["htmlparentpath"] = replaceString(fileSourceParentLink,'\','/') 
 	currentSourceData["title"] = sourceFile.name()
 	currentSourceData["name"] = pureName
 	currentSourceData["htmlname"] = pureName+".html"
@@ -45,12 +47,13 @@ block akoParseSimple(sourceFile,type,currentDir)
 	
 	hasModule = false
 	hasClass = false
+	isCode = false
 	currentModuleValue = null
 	currentClassName = null
 	currentComment = ""
 	lineNumber = 0
 
-	source = sourceFile.readFileAsString()	+ " "
+	source = sourceFile.readFileAsString()	+ "                            "
 	TOKEN_UNUSED =  0 TOKEN_MULTILINE_COMMENT = 1 
 	TOKEN_TYPE = TOKEN_UNUSED
 	sourceLen = lengthOf(source)
@@ -150,7 +153,7 @@ block akoParseSimple(sourceFile,type,currentDir)
 			case TOKEN_MULTILINE_COMMENT
 				if source[i] == '*' and source[i+1] == '/' and (source[i+2] != '"' or source[i+2] != "'") {
 					TOKEN_TYPE = TOKEN_UNUSED
-				elif source[i] == cr or source[i] == nl or source[i] == crlf
+				elif source[i] == cr or source[i] == nl or source[i] == crlf 
 					while isWhiteSpace(source[i]+source[i+1]) {
 						i++
 					} currentComment += nl lineNumber++
@@ -187,6 +190,8 @@ block akoParseSimple(sourceFile,type,currentDir)
 							while (source[i] + source[i+1]) != '*/' {
 								currentSourceData["suffix"] += source[i] i++ 
 							} i-- i--
+						elif (varToken+source[i+2]) == "```"
+							if isCode { isCode = false else isCode = true }
 						}
 					}
 					currentComment += source[i] 

@@ -26,9 +26,25 @@ block prepareDirectory(currentDir)
 						currentDir = path.absolutePath()
 					}
 				}
-				printVerboseFlag = toLowerCase(akoFlags["verbose"])
-				if printVerboseFlag = "false" or printVerboseFlag = "no" or printVerboseFlag = "0" { printVerbose = false
-				elif printVerboseFlag == "true" or printVerboseFlag = "yes" or printVerboseFlag = "1"  printVerbose = true }
+				akoFlag = "" akoFlag_t = akoFlags["verbose"]
+				if akoFlag_t != null { akoFlag = toLowerCase(akoFlag_t) }
+				if akoFlag = "false" or akoFlag = "no" or akoFlag = "0" { printVerbose = false
+				elif akoFlag == "true" or akoFlag = "yes" or akoFlag = "1"  printVerbose = true }
+				
+				akoFlag_t = akoFlags["docasindex"] 
+				if akoFlag_t != null { akoFlag = toLowerCase(akoFlag_t) }
+				if akoFlag = "false" or akoFlag = "no" or akoFlag = "0" { dotDocAsIndex = false
+				elif akoFlag == "true" or akoFlag = "yes" or akoFlag = "1"  dotDocAsIndex = true }
+				
+				akoFlag_t = akoFlags["indexes"] 
+				if akoFlag_t != null { akoFlag = toLowerCase(akoFlag_t) }
+				if akoFlag = "false" or akoFlag = "no" or akoFlag = "0" { generateIndexes = false
+				elif akoFlag == "true" or akoFlag = "yes" or akoFlag = "1"  generateIndexes = true }
+				
+				akoFlag_t = akoFlags["indexassummary"] 
+				if akoFlag_t != null { akoFlag = toLowerCase(akoFlag_t) }
+				if akoFlag = "false" or akoFlag = "no" or akoFlag = "0" { indexAsSummary = false
+				elif akoFlag == "true" or akoFlag = "yes" or akoFlag = "1"  indexAsSummary = true }
 			}
 		else
 			printAkoError("map.ako parsing failed")

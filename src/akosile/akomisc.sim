@@ -1,5 +1,6 @@
 #
 call "simple/utilities/Console.sim"
+call "simple/utilities/DateTime.sim"
 
 printVerbose = false
 akoBeSilent = false
@@ -12,6 +13,10 @@ akoDestDir = null
 akoMapFile = null
 templateFolder = null
 templateName = "default"
+dotDocAsIndex = false
+generateIndexes = true
+indexAsSummary = false
+mainTitle = "akosile"
 
 variableMap = []
 supportedSources = [".sim"]
@@ -30,21 +35,22 @@ DISPLAY_TYPE_MESSAGE = 0
 
 
 block printAkoMessage(message,type)
+	date = new DateTime(null)
 	if akoBeSilent { return } 
 	if printVerbose and (type == DISPLAY_TYPE_MESSAGE or type == DISPLAY_TYPE_WARNING ) {
 		if type == DISPLAY_TYPE_WARNING {
-			printWithFG(ConsoleColor.DARKYELLOW(), "akosile.warning	: ") @message
+			printWithFG(ConsoleColor.DARKYELLOW(), '['+date.toString()+"][akosile.warning]: ") @message
 		else
-			printWithFG(ConsoleColor.DARKMAGENTA(), "akosile.message	: ") @message
+			printWithFG(ConsoleColor.DARKMAGENTA(), '['+date.toString()+"][akosile.message]: ") @message
 		}
 		
 	elif type == DISPLAY_TYPE_INFO
-		printWithFG(ConsoleColor.DARKCYAN(), "akosile.info	: ") @message
+		printWithFG(ConsoleColor.DARKCYAN(), '['+date.toString()+"][akosile.info]   : ") @message
 	}
 	
 	
 block printAkoError(message)
-	printWithFG(ConsoleColor.DARKRED(), "error.akosile	: ") @message+". stopping documentation..."
+	printWithFG(ConsoleColor.DARKRED(), '['+date.toString()+"][error.akosile]: ") @message+". stopping documentation..."
 	exit(0)
 	
 block helpMessage()
