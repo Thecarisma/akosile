@@ -156,7 +156,48 @@ block akoParseSimple(sourceFile,type,currentDir)
 				elif source[i] == cr or source[i] == nl or source[i] == crlf 
 					while isWhiteSpace(source[i]+source[i+1]) {
 						i++
-					} currentComment += nl lineNumber++
+					} 
+					currentComment += nl lineNumber++
+					if source[i+1] == "#" and source[i+2] != "#" {
+						token = toLowerCase(source[i+2]+source[i+3]+source[i+4]+source[i+5])
+						if token == "auth" {
+							i = absorbTillWhiteSpace(source,i,"#author")
+							val = "" 
+							if toLowerCase(source[i+1]) == "-" { i++ }
+							i = absorbWhiteSpace(source,i)
+							while source[i+1] != nl and source[i+1] != crlf {
+								val += source[i] i++
+							}
+							@"Author : "+val
+							currentSourceData["author"] = val 
+						elif token == "date" or token == "time"
+							i = absorbTillWhiteSpace(source,i,"#date")
+							val = "" 
+							if toLowerCase(source[i+1]) == "-" { i++ }
+							i = absorbWhiteSpace(source,i)
+							while source[i+1] != nl and source[i+1] != crlf {
+								val += source[i] i++
+							}
+							@token+" : "+val
+							currentSourceData[token] = val 
+							
+						elif token == "lice" 
+							i = absorbTillWhiteSpace(source,i,"#license")
+							val = "" 
+							if toLowerCase(source[i+1]) == "-" { i++ }
+							i = absorbWhiteSpace(source,i)
+							while source[i+1] != nl and source[i+1] != crlf {
+								val += source[i] i++
+							}
+							@"License : "+val
+							currentSourceData["license"] = val 
+						else
+							while source[i+1] != nl and source[i+1] != crlf {
+								i++
+							}
+						}
+					}
+					
 				else
 					if (sourceLen - i) > 5 {
 						varToken = toLowerCase(source[i]+source[i+1])
