@@ -1,0 +1,42 @@
+/*
+	Variables
+	The following are variables that can be used in documentation by appending 
+	double dollar sign before it  e.g
+	@Code
+		$$website 
+		$$one
+	@EndCode
+*/
+
+[website] (https://simple-lang.sourceforge.io)
+[FTextEditor] (/modules/fultick/)
+[one]"11111111111111111111"
+[two] "this is a documenting project in double quote"
+[three] 'this is in single quote'
+
+/*
+	Groups 
+	Groups holds more than one variable that can be accessed by appending the @ 
+	symbol before the group name follow by space then the variable e.group
+	@Code
+		@Link blog
+		@Link contribute
+		@Link source
+	@EndCode
+*/
+
+[Link] {
+	[blog](https://blog.com)
+	[five]"5555555555555"
+	/*
+		This should be omitted for sure
+		[doc](a doc really)
+		[rick](definitely not morty)
+	*/
+	[six] (66666666666666666666666666)
+}
+
+[four](number is four)
+
+
+     

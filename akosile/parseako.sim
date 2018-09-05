@@ -1,0 +1,106 @@
+
+call "simple/io/File.sim"
+call "simple/core/List.sim"
+call "simple/utilities/Type.sim"
+
+
+block parseAkoFile(sourceFile)
+	printAkoMessage("preparing to parse map.ako file",DISPLAY_TYPE_INFO)
+	SCANNER_IDENTIFIER = 0 SCANNER_COMMENT = 1 SCANNER__GROUP = 2 SCANNER_COMMENT__GROUP = 3
+	SCANNER_TYPE = SCANNER_IDENTIFIER
+	source = sourceFile.readFileAsString()
+	sourceFileName = sourceFile.name()
+	sourceLen = lengthOf(source)
+	sourceCurrentLine = 1
+	currentClass = []
+	currentClassName = "__Main"
+	for a = 0 to sourceLen {
+		val = source[a]
+		switch SCANNER_TYPE {
+			case SCANNER_IDENTIFIER
+				if val == "[" {
+					valVar = ""
+					while source[a+1] != "]" and (a+1) < sourceLen {
+						valVar += source[a++]
+						if !isAlphaNum(source[a]) {
+							throwAkoError("Invalid identifier '"+source[a]+"' near '"+valVar+"'",sourceCurrentLine,sourceFileName)
+						}
+					}
+					a++ a++
+					while isWhiteSpace(source[a+1]) { a++ } if isWhiteSpace(source[a]) { a++ }
+					if source[a] == "(" or source[a] == '"' or source[a] == "'" {
+						switch source[a] {
+							case '(' litTemp = ')'
+							case '"' litTemp = '"'
+							case "'" litTemp = "'"
+						}
+						valVal = ""
+						while source[a+1] != litTemp and (a+1) < sourceLen {
+							valVal += source[a++]
+							if !isAlphaNum(source[a]) and !isPunctuation(source[a]) and !isWhiteSpace(source[a]) {
+								throwAkoError("Invalid identifier '"+source[a]+"' near '"+valVal+"'",sourceCurrentLine,sourceFileName)
+							}
+						}
+					variableMap[valVar] = valVal
+					elif source[a] == "{" 
+						varClass = []
+						currentClass = varClass
+						currentClassName = valVar
+						SCANNER_TYPE = SCANNER__GROUP
+						continue
+					}
+				elif source[a] == '/' and source[a+1] == '*' a++ SCANNER_TYPE = SCANNER_COMMENT
+				elif val == nl or val == crlf sourceCurrentLine++
+				}
+			case SCANNER__GROUP
+				while isWhiteSpace(source[a]) and (a+1) < sourceLen { a++ }
+				if source[a] == "}" {
+					a++
+					SCANNER_TYPE = SCANNER_IDENTIFIER
+					variableMap[currentClassName] = currentClass
+					continue
+				}
+				if source[a] == "[" {
+					valVar = ""
+					while source[a+1] != "]" and (a+1) < sourceLen {
+						valVar += source[a++]
+						if !isAlphaNum(source[a]) {
+							throwAkoError("Invalid identifier '"+source[a]+"' near '"+valVar+"'",sourceCurrentLine,sourceFileName)
+						}
+					}
+					a++ a++
+					while isWhiteSpace(source[a+1]) { a++ } if isWhiteSpace(source[a]) { a++ }
+					if source[a] == "(" or source[a] == '"' or source[a] == "'" {
+						switch source[a] {
+							case '(' litTemp = ')'
+							case '"' litTemp = '"'
+							case "'" litTemp = "'"
+						}
+						valVal = ""
+						while source[a+1] != litTemp and (a+1) < sourceLen {
+							valVal += source[a++]
+							if !isAlphaNum(source[a]) and !isPunctuation(source[a]) and !isWhiteSpace(source[a]) {
+								throwAkoError("Invalid identifier '"+source[a]+"' near '"+valVal+"'",sourceCurrentLine,sourceFileName)
+							}
+						}
+					currentClass[valVar] = valVal
+					}
+				elif source[a] == '/' and source[a+1] == '*' a++ SCANNER_TYPE = SCANNER_COMMENT__GROUP
+				elif val == nl or val == crlf sourceCurrentLine++
+				}
+			case SCANNER_COMMENT__GROUP
+				if source[a] == '*' and source[a+1] == '/' {
+					a++ SCANNER_TYPE = SCANNER__GROUP
+				else 
+					
+				}
+			case SCANNER_COMMENT
+				if source[a] == '*' and source[a+1] == '/' {
+					a++ SCANNER_TYPE = SCANNER_IDENTIFIER
+				else 
+					
+				}
+		}
+	}
+	return true
+	
