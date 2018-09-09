@@ -209,9 +209,9 @@ block formatHTMLComment(rawComment,htmlPath)
 			} 
 			finalHtml += rawComment[a]
 		case TOKEN_CODE 
-			if (rawCommentLen - a) > 3 {
-				if toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3]) == "@end" {
-					a = absorbTillWhiteSpace(rawComment,a,"@end")
+			if (rawCommentLen - a) > 7 {
+				if toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3]+rawComment[a+4]+rawComment[a+5]+rawComment[a+6]+rawComment[a+7]) == "@endcode" {
+					a = absorbTillWhiteSpace(rawComment,a,"@endcode")
 					finalHtml += '</code></pre> '+nl TOKEN_TYPE = TOKEN_DEFAULT continue
 				}
 			}
@@ -223,9 +223,9 @@ block formatHTMLComment(rawComment,htmlPath)
 
 block absorbTillWhiteSpace(source,i,val)
 	l = lengthOf(val)
-	for d = 0 to l { i++ } 
+	for d = 1 to l { i++ } 
 	return absorbWhiteSpace(source,i)
 
 block absorbWhiteSpace(source,i)
-	while isWhiteSpace(source[i+1]) { i++ }
+	while isWhiteSpace(source[i-1]) { i++ }
 	return i
