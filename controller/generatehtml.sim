@@ -130,7 +130,7 @@ block createHtml(akoDocData)
 	printAkoMessage("generating webpage at : "+akoDocData[:htmlpath],DISPLAY_TYPE_MESSAGE)
 	
 	__linkToFile = "" 
-	__mainContent = "<p>"+formatHTMLComment(akoDocData[:prefix],getRelativeLink(akoDocData[:htmlpath]))+"</p><br />"
+	__mainContent = ""+formatHTMLComment(akoDocData[:prefix],getRelativeLink(akoDocData[:htmlpath]))+"<br />"
 	splited = splitString(akoDocData[:htmlpath],'/')
 	splitedLen = lengthOf(splited)
 	for a = 0 to splitedLen - 1 {

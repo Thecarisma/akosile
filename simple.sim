@@ -53,4 +53,3 @@ block main()
 		}
 	}
 	prepareDirectory(dir)
-	#@lengthOf(variableMap)

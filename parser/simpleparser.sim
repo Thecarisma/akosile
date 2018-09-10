@@ -1,4 +1,7 @@
-
+/*
+	A JS library that parse all simple code block and give syntax high light
+	A JS library that parse <pre><code> content </code></pre> and create div below it for output
+*/
 
 block akoParseSimple(sourceFile,type,currentDir)
 	printAkoMessage("parsing : "+removeString(sourceFile.absolutePath(),currentDir),DISPLAY_TYPE_MESSAGE)
@@ -54,7 +57,7 @@ block akoParseSimple(sourceFile,type,currentDir)
 	lineNumber = 0
 
 	source = sourceFile.readFileAsString()	+ "                            "
-	TOKEN_UNUSED =  0 TOKEN_MULTILINE_COMMENT = 1 
+	TOKEN_UNUSED =  0 TOKEN_MULTILINE_COMMENT = 1 TOKEN_PREFIX = 2 TOKEN_SUFFIX = 3
 	TOKEN_TYPE = TOKEN_UNUSED
 	sourceLen = lengthOf(source)
 	for i = 0 to sourceLen {
@@ -153,7 +156,20 @@ block akoParseSimple(sourceFile,type,currentDir)
 			case TOKEN_MULTILINE_COMMENT
 				if source[i] == '*' and source[i+1] == '/' and (source[i+2] != '"' or source[i+2] != "'") {
 					TOKEN_TYPE = TOKEN_UNUSED
-				elif source[i] == cr or source[i] == nl or source[i] == crlf 
+			elif (source[i]+source[i+1]+source[i+2]) == "```" 
+				i = absorbTillWhiteSpace(source,i,"```")
+				type = "" 
+				while !isWhiteSpace(source[i]) {
+					type += source[i] i++
+				} 
+				#@type #simple, javascript, c
+				currentComment += "@Code"
+				while source[i]+source[i+1]+source[i+2] != "```" {
+					currentComment += source[i] i++
+				}
+				i = absorbTillWhiteSpace(source,i,"```")
+				currentComment += "@End "+source[i]
+				elif source[i] == cr or source[i] == nl or source[i] == crlf  
 					while isWhiteSpace(source[i]+source[i+1]) {
 						i++
 					} 
@@ -168,7 +184,6 @@ block akoParseSimple(sourceFile,type,currentDir)
 							while source[i+1] != nl and source[i+1] != crlf {
 								val += source[i] i++
 							}
-							@"Author : "+val
 							currentSourceData["author"] = val 
 						elif token == "date" or token == "time"
 							i = absorbTillWhiteSpace(source,i,"#date")
@@ -178,7 +193,6 @@ block akoParseSimple(sourceFile,type,currentDir)
 							while source[i+1] != nl and source[i+1] != crlf {
 								val += source[i] i++
 							}
-							@token+" : "+val
 							currentSourceData[token] = val 
 							
 						elif token == "lice" 
@@ -189,7 +203,6 @@ block akoParseSimple(sourceFile,type,currentDir)
 							while source[i+1] != nl and source[i+1] != crlf {
 								val += source[i] i++
 							}
-							@"License : "+val
 							currentSourceData["license"] = val 
 						else
 							while source[i+1] != nl and source[i+1] != crlf {
@@ -223,20 +236,61 @@ block akoParseSimple(sourceFile,type,currentDir)
 						}
 						if token == "@pre" {
 							i = absorbTillWhiteSpace(source,i,"@prefix")
-							while (source[i] + source[i+1]) != '*/' {
-								currentSourceData["prefix"] += source[i] i++ 
-							} i-- i--
+							TOKEN_TYPE = TOKEN_PREFIX
 						elif token == "@suf"
-							i = absorbTillWhiteSpace(source,i,"@suffix")
-							while (source[i] + source[i+1]) != '*/' {
-								currentSourceData["suffix"] += source[i] i++ 
-							} i-- i--
-						elif (varToken+source[i+2]) == "```"
-							if isCode { isCode = false else isCode = true }
-						}
+							TOKEN_TYPE = TOKEN_SUFFIX
+						} 
 					}
 					currentComment += source[i] 
 				}
+				
+			case TOKEN_PREFIX
+			if source[i] == '*' and source[i+1] == '/' and (source[i+2] != '"' or source[i+2] != "'") {
+				TOKEN_TYPE = TOKEN_UNUSED
+			elif (source[i]+source[i+1]+source[i+2]) == "```" 
+				i = absorbTillWhiteSpace(source,i,"```")
+				type = "" 
+				while !isWhiteSpace(source[i]) {
+					type += source[i] i++
+				} 
+				#@type #simple, javascript, c
+				currentSourceData["prefix"] += "@Code"
+				while source[i]+source[i+1]+source[i+2] != "```" {
+					currentSourceData["prefix"] += source[i] i++
+				}
+				i = absorbTillWhiteSpace(source,i,"```")
+				currentSourceData["prefix"] += "@End "+source[i]
+			elif source[i] == cr or source[i] == nl or source[i] == crlf and !isCode
+				while isWhiteSpace(source[i]+source[i+1]) {
+					i++
+				} currentSourceData["prefix"] += nl
+			else
+				currentSourceData["prefix"] += source[i]
+			}
+				
+			case TOKEN_SUFFIX
+			if source[i] == '*' and source[i+1] == '/' and (source[i+2] != '"' or source[i+2] != "'") {
+				TOKEN_TYPE = TOKEN_UNUSED
+			elif (source[i]+source[i+1]+source[i+2]) == "```" 
+				i = absorbTillWhiteSpace(source,i,"```")
+				type = "" 
+				while !isWhiteSpace(source[i]) {
+					type += source[i] i++
+				} 
+				#@type #simple, javascript, c
+				currentSourceData["suffix"] += "@Code"
+				while source[i]+source[i+1]+source[i+2] != "```" {
+					currentSourceData["suffix"] += source[i] i++
+				}
+				i = absorbTillWhiteSpace(source,i,"```")
+				currentSourceData["suffix"] += "@End "+source[i]
+			elif source[i] == cr or source[i] == nl or source[i] == crlf 
+				while isWhiteSpace(source[i]+source[i+1]) {
+					i++
+				} currentSourceData["suffix"] += nl
+			else
+				currentSourceData["suffix"] += source[i]
+			}			
 		}
 	} 
 	add(tempModule["classes"],tempClass) 

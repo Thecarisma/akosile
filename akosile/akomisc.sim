@@ -158,7 +158,7 @@ block formatHTMLComment(rawComment,htmlPath)
 						finalHtml += '<div class="block-quote block-quote-warning">'
 						pendingCloseDiv = true isBlockQoute = true continue
 						
-					elif token = "@code"
+					elif token = "@code" 
 						a = absorbTillWhiteSpace(rawComment,a,"@code")
 						if toLowerCase(rawComment[a]) == "s" { a++ }
 						
@@ -210,7 +210,7 @@ block formatHTMLComment(rawComment,htmlPath)
 			finalHtml += rawComment[a]
 		case TOKEN_CODE 
 			if (rawCommentLen - a) > 3 {
-				if toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3]) == "@end" {
+				if toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3]) == "@end" or toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]) == "```" {
 					a = absorbTillWhiteSpace(rawComment,a,"@end")
 					finalHtml += '</code></pre> '+nl TOKEN_TYPE = TOKEN_DEFAULT continue
 				}

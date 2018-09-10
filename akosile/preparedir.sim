@@ -65,11 +65,12 @@ block prepareDirectory(currentDir)
 	if !akoDestDirectory.exists() {
 		akoDestDirectory.create()
 	}
-	akoDestDir = akoDestDirectory.absolutePath()
-	processDirectory(path,currentDir)
+	akoDestDir = akoDestDirectory.absolutePath() 
+	processDirectory(currentDir)
 	generateDocWebsite()
 	
-block processDirectory(sourceDir,currentDir)
+block processDirectory(currentDir)
+	sourceDir = new Directory(currentDir)
 	files = sourceDir.listFiles()
 	filesLen = lengthOf(files)
 	for b = 0 to filesLen {
