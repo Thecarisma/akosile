@@ -238,6 +238,7 @@ block akoParseSimple(sourceFile,type,currentDir)
 							i = absorbTillWhiteSpace(source,i,"@prefix")
 							TOKEN_TYPE = TOKEN_PREFIX
 						elif token == "@suf"
+							i = absorbTillWhiteSpace(source,i,"@suffix")
 							TOKEN_TYPE = TOKEN_SUFFIX
 						} 
 					}

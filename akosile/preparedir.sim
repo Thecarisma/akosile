@@ -88,7 +88,7 @@ block processDirectory(currentDir)
 	dirsLen = lengthOf(dirs)
 	for b = 0 to dirsLen {
 		printAkoMessage("documenting : "+removeString(dirs[b].absolutePath(),currentDir),DISPLAY_TYPE_INFO)
-		processDirectory(dirs[b],currentDir)
+		processDirectory(dirs[b].absolutePath())
 	}
 	
 
