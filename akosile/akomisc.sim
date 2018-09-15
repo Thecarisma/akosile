@@ -226,9 +226,9 @@ block formatHTMLComment(rawComment,htmlPath)
 
 block absorbTillWhiteSpace(source,i,val)
 	l = lengthOf(val)
-	for d = 0 to l { i++ } 
+	for d = 1 to l { i++ } 
 	return absorbWhiteSpace(source,i)
 
 block absorbWhiteSpace(source,i)
-	while isWhiteSpace(source[i+1]) { i++ }
+	while isWhiteSpace(source[i-1]) { i++ }
 	return i
