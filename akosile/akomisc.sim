@@ -1,6 +1,5 @@
-#
-call "simple/utilities/Console.sim"
-call "simple/utilities/DateTime.sim"
+call simple.utilities.Console
+call simple.utilities.DateTime
 
 printVerbose = false
 akoBeSilent = false
@@ -39,18 +38,18 @@ block printAkoMessage(message,type)
 	if akoBeSilent { return } 
 	if printVerbose and (type == DISPLAY_TYPE_MESSAGE or type == DISPLAY_TYPE_WARNING ) {
 		if type == DISPLAY_TYPE_WARNING {
-			printWithFG(ConsoleColor.DARKYELLOW(), '['+date.toString()+"][akosile.warning]: ") @message
+			printfc(stdout, ConsoleColor.DARKYELLOW(), '['+date.toString()+"][akosile.warning]: ") @message
 		else
-			printWithFG(ConsoleColor.DARKMAGENTA(), '['+date.toString()+"][akosile.message]: ") @message
+			printfc(stdout, ConsoleColor.DARKMAGENTA(), '['+date.toString()+"][akosile.message]: ") @message
 		}
 		
 	elif type == DISPLAY_TYPE_INFO
-		printWithFG(ConsoleColor.DARKCYAN(), '['+date.toString()+"][akosile.info]   : ") @message
+		printfc(stdout, ConsoleColor.DARKCYAN(), '['+date.toString()+"][akosile.info]   : ") @message
 	}
 	
 	
 block printAkoError(message)
-	printWithFG(ConsoleColor.DARKRED(), '['+date.toString()+"][error.akosile]: ") @message+". stopping documentation..."
+	printfc(stdout, ConsoleColor.DARKRED(), '['+date.toString()+"][error.akosile]: ") @message+". stopping documentation..."
 	exit(0)
 	
 block helpMessage()
@@ -58,11 +57,11 @@ block helpMessage()
 	exit(0)
 	
 block aboutAkosile()
-	@"It is a docu,emtation progra,"
+	@"It is a documentation program"
 	exit(0)
 	
 block throwAkoError(message,line,fileName)
-	printWithFG(ConsoleColor.DARKRED(), "error.akosile	: ") @message
+	printfc(ConsoleColor.DARKRED(), "error.akosile	: ") @message
 	println("                  In Line "+line+" in file "+fileName)
 	exit(0)
 	
