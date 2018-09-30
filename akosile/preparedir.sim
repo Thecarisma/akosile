@@ -1,5 +1,5 @@
 
-call "simple/system/System.sim"
+call simple.system.System
 call "parseako.sim"
 call "../parser/simpleparser.sim"
 call "../controller/generatehtml.sim"

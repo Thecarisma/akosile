@@ -1,11 +1,11 @@
 
 call "./akosile/akomisc.sim"
 call "./akosile/preparedir.sim"
-call "simple/io/Directory.sim"
+call simple.io.Directory
 
 block main()
 	dir = null 
-	p = new Directory("./templates/") templateFolder = p.absolutePath()
+	p = new Directory("templates/") templateFolder = p.absolutePath()
 	cmdparamsLen = lengthOf(cmdparams)
 	for a = 0 to cmdparamsLen {
 		switch cmdparams[a] {
