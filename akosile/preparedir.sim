@@ -1,0 +1,105 @@
+
+call "simple/system/System.sim"
+call "parseako.sim"
+call "../parser/simpleparser.sim"
+call "../controller/generatehtml.sim"
+
+block prepareDirectory(currentDir)
+	if akoMapFile == null  { akoFile = new File(currentDirectory()+"/map.ako")
+	else akoFile = new File(akoMapFile) }
+	if akoFile.exists() {
+		changeDirectory(akoFile.directory())
+		if parseAkoFile(akoFile) == true {
+			printAkoMessage("map.ako parsed successfully",DISPLAY_TYPE_MESSAGE)
+			akoFlags = variableMap["AkoFlags"]
+			if isList(akoFlags) and !isString(akoFlags) {
+				if akoDestDir == null {
+					akoDestDirFlag = akoFlags["destination"]
+					if akoDestDirFlag != null {
+						akoDestDir = akoDestDirFlag
+					}
+				}
+				if currentDir == null {
+					currentDirFlag = akoFlags["directory"]
+					if currentDirFlag != null {
+						path = new Directory(currentDirFlag)
+						currentDir = path.absolutePath()
+					}
+				}
+				akoFlag = "" akoFlag_t = akoFlags["verbose"]
+				if akoFlag_t != null { akoFlag = toLowerCase(akoFlag_t) }
+				if akoFlag = "false" or akoFlag = "no" or akoFlag = "0" { printVerbose = false
+				elif akoFlag == "true" or akoFlag = "yes" or akoFlag = "1"  printVerbose = true }
+				
+				akoFlag_t = akoFlags["docasindex"] 
+				if akoFlag_t != null { akoFlag = toLowerCase(akoFlag_t) }
+				if akoFlag = "false" or akoFlag = "no" or akoFlag = "0" { dotDocAsIndex = false
+				elif akoFlag == "true" or akoFlag = "yes" or akoFlag = "1"  dotDocAsIndex = true }
+				
+				akoFlag_t = akoFlags["indexes"] 
+				if akoFlag_t != null { akoFlag = toLowerCase(akoFlag_t) }
+				if akoFlag = "false" or akoFlag = "no" or akoFlag = "0" { generateIndexes = false
+				elif akoFlag == "true" or akoFlag = "yes" or akoFlag = "1"  generateIndexes = true }
+				
+				akoFlag_t = akoFlags["indexassummary"] 
+				if akoFlag_t != null { akoFlag = toLowerCase(akoFlag_t) }
+				if akoFlag = "false" or akoFlag = "no" or akoFlag = "0" { indexAsSummary = false
+				elif akoFlag == "true" or akoFlag = "yes" or akoFlag = "1"  indexAsSummary = true }
+			}
+		else
+			printAkoError("map.ako parsing failed")
+		}
+	else 
+		printAkoMessage(akoFile.getName()+" : the ako file does not exists ",DISPLAY_TYPE_WARNING)
+	}	
+	if currentDir == null {
+			printAkoMessage("no directory specified assuming current directory",2)
+		currentDir = currentDirectory()
+		printAkoMessage("directory: "+currentDir,DISPLAY_TYPE_MESSAGE)
+	}
+	if akoDestDir == null {
+			printAkoMessage("no output directory specified assuming current directory",2)
+		akoDestDir = currentDir
+	}	
+	akoDestDirectory = new Directory(akoDestDir)
+	if !akoDestDirectory.exists() {
+		akoDestDirectory.create()
+	}
+	akoDestDir = akoDestDirectory.absolutePath() 
+	processDirectory(currentDir)
+	generateDocWebsite()
+	
+block processDirectory(currentDir)
+	sourceDir = new Directory(currentDir)
+	files = sourceDir.listFiles()
+	filesLen = lengthOf(files)
+	for b = 0 to filesLen {
+		supportedLen = lengthOf(supportedSources)
+		for c = 0 to supportedLen {
+			if stringEndsWith(files[b].absolutePath(),supportedSources[c]) {
+				if supportedSources[c] == ".sim" {
+					akoParseSimple(files[b],supportedSources[c],currentDir)
+				}
+				break
+			}
+		}
+	}
+	dirs = sourceDir.listDirectories()
+	dirsLen = lengthOf(dirs)
+	for b = 0 to dirsLen {
+		printAkoMessage("documenting : "+removeString(dirs[b].absolutePath(),currentDir),DISPLAY_TYPE_INFO)
+		processDirectory(dirs[b].absolutePath())
+	}
+	
+
+
+
+
+
+
+
+
+
+
+
+

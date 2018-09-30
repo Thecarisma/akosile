@@ -1,0 +1,234 @@
+#
+call "simple/utilities/Console.sim"
+call "simple/utilities/DateTime.sim"
+
+printVerbose = false
+akoBeSilent = false
+akoDocAuthor = "Akosile Documentor"
+akoDocDate = date()
+akoDocTime = time()
+akoDocLicense = "NONE" #to fetch all from .ako file
+
+akoDestDir = null
+akoMapFile = null
+templateFolder = null
+templateName = "default"
+dotDocAsIndex = false
+generateIndexes = true
+indexAsSummary = false
+mainTitle = "akosile"
+
+variableMap = []
+supportedSources = [".sim"]
+allAkoDocLinks = [
+	:currentDir = "./"
+]
+allAkoDocData = [
+	[
+		:title = "default"
+	]
+]
+
+DISPLAY_TYPE_WARNING = 2
+DISPLAY_TYPE_INFO = 1
+DISPLAY_TYPE_MESSAGE = 0
+
+
+block printAkoMessage(message,type)
+	date = new DateTime(null)
+	if akoBeSilent { return } 
+	if printVerbose and (type == DISPLAY_TYPE_MESSAGE or type == DISPLAY_TYPE_WARNING ) {
+		if type == DISPLAY_TYPE_WARNING {
+			printWithFG(ConsoleColor.DARKYELLOW(), '['+date.toString()+"][akosile.warning]: ") @message
+		else
+			printWithFG(ConsoleColor.DARKMAGENTA(), '['+date.toString()+"][akosile.message]: ") @message
+		}
+		
+	elif type == DISPLAY_TYPE_INFO
+		printWithFG(ConsoleColor.DARKCYAN(), '['+date.toString()+"][akosile.info]   : ") @message
+	}
+	
+	
+block printAkoError(message)
+	printWithFG(ConsoleColor.DARKRED(), '['+date.toString()+"][error.akosile]: ") @message+". stopping documentation..."
+	exit(0)
+	
+block helpMessage()
+	@"Helping"
+	exit(0)
+	
+block aboutAkosile()
+	@"It is a docu,emtation progra,"
+	exit(0)
+	
+block throwAkoError(message,line,fileName)
+	printWithFG(ConsoleColor.DARKRED(), "error.akosile	: ") @message
+	println("                  In Line "+line+" in file "+fileName)
+	exit(0)
+	
+block getRelativeLink(tempLink)
+	ftempLink = ""
+	splited = splitString(tempLink,'/')
+	splitedLen = lengthOf(splited)
+	for a = 0 to splitedLen - 1 {
+		if splited[a] == '.' {
+			ftempLink += "./"
+		else
+			ftempLink += "../"
+		}
+	}
+	return ftempLink
+	
+block formatHTMLComment(rawComment,htmlPath)
+	finalHtml = ""
+	TOKEN_DEFAULT = 1 TOKEN_CODE = 2
+	TOKEN_TYPE = TOKEN_DEFAULT
+	
+	pendingCloseDiv = false
+	isBlockQoute = false
+	isParameter = false
+	isThrow = false
+	
+	rawCommentLen = lengthOf(rawComment)
+	for a = 0 to rawCommentLen {
+		switch TOKEN_TYPE {
+		case TOKEN_DEFAULT
+			if isBlockQoute and pendingCloseDiv and (rawComment[a] = nl or rawComment[a]) {
+				finalHtml += '<br />'  
+			elif (isThrow or isParameter) and pendingCloseDiv and (rawComment[a] = nl or rawComment[a]) 
+				finalHtml += '<br />&emsp;&emsp; '  
+			elif rawComment[a] == "@"  
+				if (rawCommentLen - a) > 5 {
+					token = toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3]+rawComment[a+4])
+					if token = "@retu" { 
+						a = absorbTillWhiteSpace(rawComment,a,"@return")
+						if toLowerCase(rawComment[a]) == "s" { a++ }
+						
+						if pendingCloseDiv { finalHtml += '</div>' pendingCloseDiv = false isBlockQoute = false }
+						finalHtml += '<div class="block-quote block-quote-info">Returns: <br />&emsp;&emsp;'
+						pendingCloseDiv = true continue
+						
+					elif token = "@data" 
+						a = absorbTillWhiteSpace(rawComment,a,"@datatype")
+						if toLowerCase(rawComment[a]) == "s" { a++ }
+						finalHtml += ' - '
+						continue
+						
+					elif token = "@note" 
+						a = absorbTillWhiteSpace(rawComment,a,"@note")
+						if toLowerCase(rawComment[a]) == "s" { a++ }
+						
+						if pendingCloseDiv { finalHtml += '</div>' pendingCloseDiv = false isBlockQoute = false isParameter = false isThrow = false }
+						finalHtml += '<div class="block-quote block-quote-danger">Note: <br />&emsp;&emsp;'
+						pendingCloseDiv = true continue		
+						
+					elif token = "@thro" 
+						a = absorbTillWhiteSpace(rawComment,a,"@throw")
+						if toLowerCase(rawComment[a]) == "s" { a++ }
+						
+						if !isThrow { 
+							if pendingCloseDiv { finalHtml += '</div>' pendingCloseDiv = false isBlockQoute = false isParameter = false isThrow = false }
+							finalHtml += '<div class="block-quote block-quote-danger">Throws: <br /> &emsp;&emsp; '
+							pendingCloseDiv = true isThrow = true continue
+						}					
+						
+					elif token = "@sinc" 
+						a = absorbTillWhiteSpace(rawComment,a,"@since")
+						if toLowerCase(rawComment[a]) == "s" { a++ }
+						
+						if pendingCloseDiv { finalHtml += '</div>' pendingCloseDiv = false isBlockQoute = false isParameter = false isThrow = false }
+						finalHtml += '<div class="block-quote block-quote-info">Since: <br />&emsp;&emsp;'
+						pendingCloseDiv = true continue
+						
+					elif token = "@para" and  toLowerCase(rawComment[a+5]) = "m" 
+						a = absorbTillWhiteSpace(rawComment,a,"@param")
+						if toLowerCase(rawComment[a]) == "s" { a++ }
+						
+						if !isParameter { 
+							if pendingCloseDiv { finalHtml += '</div>' pendingCloseDiv = false isBlockQoute = false isParameter = false isThrow = false }
+							finalHtml += '<div class="block-quote block-quote-info">Parameters: <br /> &emsp;&emsp; '
+							pendingCloseDiv = true isParameter = true continue
+						}
+						
+					elif token = "@bloc" and  toLowerCase(rawComment[a+6]) = "q" 
+						a = absorbTillWhiteSpace(rawComment,a,"@blockquote")
+						if toLowerCase(rawComment[a]) == "s" { a++ }
+						
+						if pendingCloseDiv { finalHtml += '</div>' pendingCloseDiv = false isBlockQoute = false isParameter = false isThrow = false }
+						finalHtml += '<div class="block-quote block-quote-warning">'
+						pendingCloseDiv = true isBlockQoute = true continue
+						
+					elif token = "@code" 
+						a = absorbTillWhiteSpace(rawComment,a,"@code")
+						if toLowerCase(rawComment[a]) == "s" { a++ }
+						
+						if pendingCloseDiv { finalHtml += '</div>' pendingCloseDiv = false isBlockQoute = false isParameter = false isThrow = false }
+						finalHtml += '<pre><code class="simple language-simple">' TOKEN_TYPE = TOKEN_CODE continue
+						
+					elif toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3]) == "@end" 
+						a = absorbTillWhiteSpace(rawComment,a,"@end")
+						if toLowerCase(rawComment[a]) == "s" { a++ }
+						finalHtml += '</div>' pendingCloseDiv = false isBlockQoute = false
+					elif toLowerCase(rawComment[a]) == "@"
+						a++ group = "" var = "" 
+						while !isWhiteSpace(rawComment[a]) {
+							group += rawComment[a] a++
+						} a++
+						while isPrintable(rawComment[a])  {
+							if group = "Block" {
+								if toLowerCase(rawComment[a-1]) == ")" {
+									break
+								}
+							elif isWhiteSpace(rawComment[a])
+								break
+							}
+							var += rawComment[a] a++
+						}
+						g = variableMap[group] 
+						if isList(g) and !isString(g) {
+							v = g[var] 
+							if v == null {
+								printAkoMessage("the variable '"+var+"' is not defined in the group '"+group+"' ",DISPLAY_TYPE_WARNING)
+								finalHtml += "@"+group+" "+var
+								if isBlockQoute { finalHtml+= "<br />" }
+							else
+								if stringStartsWith(v,"http") or stringStartsWith(v,"./") or stringStartsWith(v,"../") or stringStartsWith(v,"#") {
+									finalHtml += '<a href="'+htmlPath+v+'">'+var+'</a>'
+								else
+									finalHtml += v
+								} if isBlockQoute { finalHtml+= "<br />" }
+							}
+						else 
+							printAkoMessage("the group '"+group+"' is not define ",DISPLAY_TYPE_WARNING)
+							finalHtml += "@"+group+" "+var
+							if isBlockQoute { finalHtml+= "<br />" }
+							
+						}
+					}
+				}
+			} 
+			finalHtml += rawComment[a]
+		case TOKEN_CODE 
+			if (rawCommentLen - a) > 7 
+				if  toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3]+rawComment[a+4]+rawComment[a+5]+rawComment[a+6]+rawComment[a+7]) == "@endcode" {
+					a = absorbTillWhiteSpace(rawComment,a,"@endcode")
+					finalHtml += '</code></pre> '+nl TOKEN_TYPE = TOKEN_DEFAULT continue
+				elif toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]+rawComment[a+3]) == "@end" or toLowerCase(rawComment[a]+rawComment[a+1]+rawComment[a+2]) == "```" 
+					if rawComment[a] == "`" { a = absorbTillWhiteSpace(rawComment,a,"```") else a = absorbTillWhiteSpace(rawComment,a,"@end") }
+					finalHtml += '</code></pre> '+nl TOKEN_TYPE = TOKEN_DEFAULT continue
+				}
+			}
+			finalHtml += rawComment[a]
+		}
+	}
+	if pendingCloseDiv { finalHtml+= "</div>" }
+	return finalHtml
+
+block absorbTillWhiteSpace(source,i,val)
+	l = lengthOf(val)
+	for d = 1 to l { i++ } 
+	return absorbWhiteSpace(source,i)
+
+block absorbWhiteSpace(source,i)
+	while isWhiteSpace(source[i-1]) { i++ }
+	return i

@@ -1,0 +1,55 @@
+
+call "./akosile/akomisc.sim"
+call "./akosile/preparedir.sim"
+call "simple/io/Directory.sim"
+
+block main()
+	dir = null 
+	p = new Directory("./templates/") templateFolder = p.absolutePath()
+	cmdparamsLen = lengthOf(cmdparams)
+	for a = 0 to cmdparamsLen {
+		switch cmdparams[a] {
+			case "--help" helpMessage() continue
+			case "-h" helpMessage() continue
+			case "--h" helpMessage() continue
+			
+			case "--about" aboutAkosile() continue
+			case "-a" aboutAkosile() continue
+			case "--a" aboutAkosile() continue
+			
+			case "--verbose" printVerbose = true continue
+			case "-v" printVerbose = true continue
+			case "--v" printVerbose = true continue
+			
+			case "--docasindex" dotDocAsIndex = true continue
+			case "-i" dotDocAsIndex = true continue
+			case "--i" dotDocAsIndex = true continue
+			
+			case "--indexes" generateIndexes = false continue
+			case "-n" generateIndexes = false continue
+			case "--n" generateIndexes = false continue
+			
+			case "--silent" akoBeSilent = true continue
+			case "-s" akoBeSilent = true continue
+			case "--s" akoBeSilent = true continue
+			
+			case "--destination" akoDestDir = cmdparams[a++]
+			case "-ds" akoDestDir = cmdparams[a++]
+			case "--ds" akoDestDir = cmdparams[a++]
+			
+			case "--directory" dir = cmdparams[a++]
+			case "-d" dir = cmdparams[a++]
+			case "--d" dir = cmdparams[a++]
+			
+			case "--map" akoMapFile = cmdparams[a++]
+			case "-m" akoMapFile = cmdparams[a++]
+			case "--m" akoMapFile = cmdparams[a++]
+			default
+				# path = new Directory(cmdparams[a])
+				# if path.isADirectory() {
+					# dir = cmdparams[a] 
+					# continue
+				# } 
+		}
+	}
+	prepareDirectory(dir)

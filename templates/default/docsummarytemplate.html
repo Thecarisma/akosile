@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{title}}</title>
+	<link href="{{assets-folder}}/css/ako-main-style.css" rel="stylesheet">
+	<link href="{{assets-folder}}/css/ako-custom-style.css" rel="stylesheet">
+</head>
+<body>
+<app-root ng-version="2.4.10" _nghost-bxo-46="">
+	<!-- HEADER BEGIN -->
+	<md-toolbar _ngcontent-bxo-46="" class="custom-toolbar mat-toolbar" role="toolbar">
+		<div class="mat-toolbar-layout"><md-toolbar-row class="mat-toolbar-row">
+			<span _ngcontent-bxo-46="">
+				<a _ngcontent-bxo-46="" href="./index.html">
+					<img _ngcontent-bxo-46="" class="logo" src="{{assets-folder}}/images/favicon.ico">
+				</a>
+			</span>
+			<span style="margin-left:20px;"></span> 
+			{{links-to-current-file}}
+			
+			<span _ngcontent-bxo-46="" class="spacer"></span>
+			
+			{{secondary-menu}}
+		</md-toolbar-row>
+		</div>
+	</md-toolbar>
+	<!-- END HEADER -->
+	
+	<!-- MAIN CONTAINER -->
+	<!-- SIDEBAR BEGIN -->
+	<md-sidenav-container _ngcontent-bxo-47="" class="container mat-sidenav-container mat-sidenav-transition">
+	
+		
+		
+		<div cdk-scrollable="" class="mat-sidenav-content" style="margin-left: 0px; margin-right: 0px; transform: translate3d(0px, 0px, 0px);">
+		<md-card style="box-shadow:none" class="mat-card">
+		<md-card-content class="mat-card-content">
+				
+		<div id="content">
+
+{{modules-list}}
+
+<!-- <div class="index-link-brief"><a href="#one" class="index-link">&emsp;&emsp; simple.io &nbsp;&nbsp;&nbsp;&nbsp; - &nbsp;&nbsp;&nbsp;&nbsp; this  &emsp;</a></div><br /> -->
+
+{{classes-list}}
+
+{{blocks-list}}
+
+{{files-list}}
+
+		</div>
+
+		</md-card-content>
+		</md-card>
+	</div>
+	</md-sidenav-container>
+</app-root>
+<script type="text/javascript" src="{{assets-folder}}/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="{{assets-folder}}/js/showdown.min.js"></script>
+<script type="text/javascript" src="{{assets-folder}}/js/ako-main-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+
+block Out1()
+
+block Out2()
+
+class outClass1
+
+	block outClass1Block1()
+
+class outClass2
+
+	block outClass2Block1()
+	
+	block outClass2Block2()
+
+module Mod1
+
+
+class Classical
+
+	block Classic1
+	
+	block Classic2
+
+	block Classic3
+	
+	block Classic4
+	
+class Vintage
+
+	block Vintage1
+	
+	block Vintage2
+	
+module Genre
+	
+class HipHop
+
+	block lilWayne()
+	
+	block Drake
+	
+class Rap
+
+	block Eminem
+	
+	block Kendrick
+
